@@ -1,0 +1,3314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Wallex</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  /* Wallex palette — matched to brand reference */
+  --forest:#146881;
+  --forest-dark:#0D2033;
+  --forest-mid:#1B97A3;
+  --forest-light:#E4F3F3;
+  --lime:#4ACF70;
+  --lime-light:#E9FBF0;
+  --lime-dark:#34A85A;
+  --gold:#D97F5A;
+  --gold-light:#FBEEE0;
+  --teal:#4CA6EE;
+  --teal-light:#E5F1FE;
+  --red:#D9605F;
+  --red-light:#FDEAEA;
+  --cream:#F3F5F6;
+  --white:#FFFFFF;
+  --text:#0D2033;
+  --text-2:#46626B;
+  --text-3:#7C97A0;
+  --border:#DCEDEE;
+  --border-mid:#BFDEDF;
+  --r:18px;
+  --r-sm:12px;
+  --r-xs:8px;
+  --shadow-card:0 2px 12px rgba(20,104,129,0.10);
+  --shadow-float:0 8px 30px rgba(20,104,129,0.18);
+}
+/* ── Dark mode — overrides the same variables used everywhere else ── */
+.phone.dark{
+  --forest:#1C86A3;
+  --forest-light:#17323A;
+  --lime-light:#163326;
+  --gold:#E2916D;
+  --gold-light:#3A2A1E;
+  --teal-light:#1B2E42;
+  --red:#E37675;
+  --red-light:#3A1F1F;
+  --cream:#0E1A1D;
+  --white:#16262A;
+  --text:#EDF4F3;
+  --text-2:#A9C2BE;
+  --text-3:#6E8985;
+  --border:#23383A;
+  --border-mid:#2E4A4C;
+  --shadow-card:0 2px 12px rgba(0,0,0,0.35);
+  --shadow-float:0 8px 30px rgba(0,0,0,0.45);
+}
+.phone.dark ::placeholder{color:var(--text-3);opacity:1;}
+body{
+  font-family:'Poppins',sans-serif;
+  background:radial-gradient(ellipse at 30% 20%,#0D2033 0%,#020C14 100%);
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  padding:20px;
+}
+
+/* ─── Phone Shell (iPhone 14 — 390×844pt logical viewport) ─── */
+.phone{
+  width:412px;height:866px;
+  background:var(--cream);
+  border-radius:66px;overflow:hidden;position:relative;
+  box-shadow:0 50px 100px rgba(0,0,0,0.55),0 0 0 1px rgba(255,255,255,0.1),inset 0 0 0 1px rgba(255,255,255,0.05);
+  border:11px solid #1a1a1a;
+}
+
+/* Notch (iPhone 14 base model — notch, not Dynamic Island) */
+.phone-notch{
+  position:absolute;top:0;left:50%;transform:translateX(-50%);
+  width:166px;height:30px;background:#000;
+  border-radius:0 0 20px 20px;z-index:60;pointer-events:none;
+}
+
+/* Home indicator */
+.phone-home-indicator{
+  position:absolute;bottom:8px;left:50%;transform:translateX(-50%);
+  width:134px;height:5px;background:var(--text);opacity:0.55;
+  border-radius:3px;z-index:500;pointer-events:none;
+}
+
+/* Status bar */
+.status-bar{
+  height:46px;padding:14px 24px 0;
+  display:flex;align-items:center;justify-content:space-between;
+  font-size:12px;font-weight:700;
+  position:absolute;top:0;left:0;right:0;z-index:50;
+}
+.status-bar.light .s-time,.status-bar.light .s-icons{color:rgba(255,255,255,0.95);}
+.status-bar.dark .s-time,.status-bar.dark .s-icons{color:var(--text);}
+
+.s-icons{display:flex;gap:5px;align-items:center;}
+
+/* ─── Screen System ─── */
+.screen{
+  position:absolute;inset:0;
+  opacity:0;pointer-events:none;
+  transition:opacity 0.32s ease,transform 0.32s ease;
+  transform:translateX(32px);
+  overflow:hidden;display:flex;flex-direction:column;
+}
+.screen.active{opacity:1;pointer-events:all;transform:none;}
+.screen.back-exit{transform:translateX(32px)!important;opacity:0!important;}
+.screen.back-enter{transform:translateX(-32px);}
+
+/* ─── Back Button ─── */
+.back-btn{
+  width:38px;height:38px;border-radius:50%;
+  border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  position:absolute;top:54px;left:18px;z-index:40;
+  transition:transform 0.15s;
+}
+.back-btn:active{transform:scale(0.92);}
+.back-btn.on-dark{background:rgba(255,255,255,0.18);}
+.back-btn.on-light{background:var(--forest-light);color:var(--forest);}
+
+/* ─── Shared Components ─── */
+.btn-primary{
+  width:100%;padding:17px;
+  background:linear-gradient(135deg,var(--forest-mid),var(--forest-dark));
+  color:white;font-size:16px;font-weight:800;
+  border:none;border-radius:var(--r-sm);
+  cursor:pointer;font-family:'Poppins',sans-serif;
+  transition:transform 0.15s,box-shadow 0.15s;
+  box-shadow:0 6px 22px rgba(20,104,129,0.38);
+  letter-spacing:0.01em;
+}
+.btn-primary:active{transform:scale(0.98);box-shadow:0 3px 10px rgba(20,104,129,0.3);}
+.btn-lime{
+  width:100%;padding:17px;
+  background:linear-gradient(135deg,var(--lime),var(--lime-dark));
+  color:white;font-size:16px;font-weight:800;
+  border:none;border-radius:var(--r-sm);
+  cursor:pointer;font-family:'Poppins',sans-serif;
+  transition:transform 0.15s,box-shadow 0.15s;
+  box-shadow:0 6px 22px rgba(74,207,112,0.38);
+}
+.btn-lime:active{transform:scale(0.98);}
+.btn-ghost{
+  width:100%;padding:15px;
+  background:transparent;color:var(--forest);
+  font-size:15px;font-weight:700;
+  border:1.5px solid var(--border-mid);border-radius:var(--r-sm);
+  cursor:pointer;font-family:'Poppins',sans-serif;
+  transition:background 0.15s;
+}
+.btn-ghost:hover{background:var(--forest-light);}
+.btn-ghost:active{transform:scale(0.98);background:var(--forest-light);}
+
+.btn-signout{
+  width:100%;padding:15px;
+  background:var(--red-light);color:var(--red);
+  font-size:14px;font-weight:800;
+  border:1.5px solid #f5b8b8;border-radius:var(--r-sm);
+  cursor:pointer;font-family:'Poppins',sans-serif;margin-top:16px;
+  transition:transform 0.15s,background 0.15s;
+}
+.btn-signout:active{transform:scale(0.97);background:#fbdada;}
+.btn-signout-confirm{
+  width:100%;padding:15px;margin-top:18px;
+  background:linear-gradient(135deg,var(--red),#C24A49);
+  color:white;font-size:15px;font-weight:800;
+  border:none;border-radius:var(--r-sm);
+  cursor:pointer;font-family:'Poppins',sans-serif;
+  box-shadow:0 6px 18px rgba(217,96,95,0.35);
+  transition:transform 0.15s,box-shadow 0.15s;
+}
+.btn-signout-confirm:active{transform:scale(0.98);box-shadow:0 3px 10px rgba(217,96,95,0.3);}
+
+.pill-tag{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:5px 12px;border-radius:20px;
+  font-size:11px;font-weight:700;letter-spacing:0.03em;
+}
+
+/* ─── S1: Welcome ─── */
+#s-welcome{background:linear-gradient(160deg,var(--forest-dark) 0%,var(--forest) 45%,#2FB08C 80%,var(--lime-dark) 100%);}
+.welcome-inner{
+  flex:1;display:flex;flex-direction:column;
+  align-items:center;
+  padding:40px 32px 44px;text-align:center;
+  position:relative;z-index:2;
+}
+.welcome-center{
+  flex:1;width:100%;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+}
+.splash-logo{
+  display:flex;align-items:flex-end;justify-content:center;
+  font-family:'Poppins',sans-serif;line-height:1;
+  margin-bottom:14px;
+}
+.splash-logo-w{font-size:40px;font-weight:800;color:white;letter-spacing:-0.01em;}
+.splash-x{
+  font-size:60px;font-weight:900;line-height:0.78;margin-left:1px;
+  background:linear-gradient(135deg,#4ACF70,#1B97A3);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.splash-tagline{
+  font-size:14px;color:rgba(255,255,255,0.7);
+  letter-spacing:0.04em;font-weight:600;
+}
+
+/* ─── S2: Intro ─── */
+#s-intro{background:var(--white);}
+.intro-hero{
+  height:240px;flex-shrink:0;
+  background:linear-gradient(145deg,var(--forest-light),#C8EAD8,var(--lime-light));
+  display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;
+}
+.intro-hero-gfx{
+  width:150px;height:150px;border-radius:50%;
+  background:linear-gradient(145deg,var(--forest),var(--lime));
+  display:flex;align-items:center;justify-content:center;
+  font-size:60px;
+  box-shadow:0 20px 50px rgba(20,104,129,0.3);
+}
+.intro-hero-ring{
+  position:absolute;width:200px;height:200px;
+  border-radius:50%;border:1.5px dashed rgba(20,104,129,0.15);
+}
+.intro-brand-mark{
+  position:absolute;bottom:14px;left:0;right:0;
+  display:flex;align-items:flex-end;justify-content:center;
+  font-family:'Poppins',sans-serif;line-height:1;z-index:2;
+}
+.intro-brand-w{font-size:17px;font-weight:800;color:var(--forest-dark);letter-spacing:-0.01em;}
+.intro-brand-mark .splash-x{font-size:25px;}
+
+.intro-body{flex:1;overflow-y:auto;padding:24px 24px 0;}
+.intro-headline{
+  font-family:'Poppins',sans-serif;
+  font-size:24px;font-weight:800;color:var(--text);
+  margin-bottom:6px;
+}
+.intro-sub-head{font-size:13px;color:var(--text-2);margin-bottom:24px;line-height:1.5;}
+
+.feature-row{display:flex;gap:14px;margin-bottom:18px;align-items:flex-start;}
+.feat-icon-wrap{
+  width:42px;height:42px;border-radius:12px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:20px;
+}
+.feat-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:3px;}
+.feat-desc{font-size:12px;color:var(--text-2);line-height:1.55;}
+
+.intro-footer{padding:16px 26px 32px;background:var(--white);}
+
+/* ─── Signup screen ─── */
+#s-signup{background:var(--cream);}
+.signup-body{flex:1;overflow-y:auto;padding:100px 24px 0;}
+
+/* ─── Login screen ─── */
+#s-login{background:var(--cream);}
+.login-body{flex:1;overflow-y:auto;padding:100px 24px 20px;}
+.login-divider{display:flex;align-items:center;gap:10px;margin:20px 0;}
+.login-divider::before,.login-divider::after{content:'';flex:1;height:1px;background:var(--border);}
+.login-divider span{font-size:11px;font-weight:700;color:var(--text-3);}
+.login-social-btn{
+  width:100%;padding:13px;border-radius:var(--r-sm);
+  border:1.5px solid var(--border);background:var(--white);
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  font-size:13px;font-weight:700;color:var(--text);
+  cursor:pointer;font-family:'Poppins',sans-serif;margin-bottom:10px;
+  transition:border-color 0.15s,background 0.15s;
+}
+.login-social-btn:hover{border-color:var(--border-mid);background:var(--cream);}
+.form-input-password-wrap{position:relative;}
+.form-input-password-wrap .form-input{padding-right:44px;}
+.pw-toggle{
+  position:absolute;right:12px;top:50%;transform:translateY(-50%);
+  background:none;border:none;cursor:pointer;color:var(--text-3);
+  font-size:16px;padding:4px;
+}
+.forgot-link{
+  font-size:12px;font-weight:700;color:var(--forest);
+  text-align:right;margin-top:-8px;margin-bottom:16px;
+  cursor:pointer;display:block;
+}
+
+/* ─── Services screen ─── */
+#s-services{background:var(--cream);}
+.services-body{flex:1;overflow-y:auto;padding:100px 24px 24px;}
+.services-connected-strip{
+  background:var(--forest-light);border:1.5px solid var(--lime);
+  border-radius:12px;padding:12px 14px;margin-bottom:16px;
+  display:flex;align-items:center;gap:8px;
+  font-size:13px;font-weight:700;color:var(--forest);
+}
+.service-card{
+  background:var(--white);border-radius:16px;
+  border:1.5px solid var(--border);padding:16px;
+  margin-bottom:10px;box-shadow:var(--shadow-card);
+  transition:border-color 0.2s,box-shadow 0.2s;
+}
+.service-card.connected{border-color:var(--lime);background:linear-gradient(135deg,var(--white),#F7FDF2);}
+.service-card.connecting{border-color:var(--gold);opacity:0.8;}
+.service-header{display:flex;align-items:center;gap:12px;}
+.service-logo{
+  width:46px;height:46px;border-radius:13px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;flex-shrink:0;
+  box-shadow:0 2px 8px rgba(0,0,0,0.08);
+}
+.service-name{font-size:15px;font-weight:800;color:var(--text);}
+.service-provider{font-size:11px;color:var(--text-3);font-weight:600;margin-top:2px;}
+.service-status{margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;gap:4px;}
+.svc-connected-badge{
+  font-size:10px;font-weight:800;padding:4px 10px;border-radius:20px;
+  background:var(--forest);color:white;letter-spacing:.04em;
+}
+.svc-connect-btn{
+  padding:8px 16px;border-radius:10px;border:1.5px solid var(--border-mid);
+  background:var(--white);color:var(--forest);
+  font-size:12px;font-weight:800;cursor:pointer;
+  font-family:'Poppins',sans-serif;transition:all 0.15s;
+}
+.svc-connect-btn:hover{background:var(--forest);color:white;border-color:var(--forest);}
+.svc-disconnect-btn{
+  font-size:10px;font-weight:700;color:var(--text-3);
+  background:none;border:none;cursor:pointer;
+  padding:2px 0;text-decoration:underline;
+  font-family:'Poppins',sans-serif;
+}
+.service-account-row{
+  margin-top:10px;padding-top:10px;border-top:1px solid var(--border);
+  display:none;
+}
+.service-card.connected .service-account-row{display:block;}
+.svc-account-label{font-size:10px;font-weight:800;color:var(--text-3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;}
+.svc-phone-input{
+  width:100%;padding:10px 12px;border:1.5px solid var(--border);
+  border-radius:9px;font-size:13px;font-weight:600;
+  font-family:'Poppins',sans-serif;color:var(--text);background:var(--cream);
+  outline:none;transition:border-color 0.2s;
+}
+.svc-phone-input:focus{border-color:var(--forest);background:white;}
+.svc-account-verified{
+  display:flex;align-items:center;gap:5px;
+  font-size:11px;font-weight:700;color:var(--forest);margin-top:6px;
+}
+
+/* ─── Service connection animation ─── */
+#s-integ .integ-service-name{
+  font-family:'Poppins',sans-serif;font-size:24px;
+  font-weight:800;color:var(--text);margin-bottom:8px;
+}
+#s-integ .integ-service-sub{
+  font-size:13px;color:var(--text-2);line-height:1.6;margin-bottom:28px;
+}
+.screen-eyebrow{
+  font-size:11px;font-weight:800;letter-spacing:0.1em;
+  text-transform:uppercase;color:var(--lime-dark);margin-bottom:8px;
+}
+.screen-title{
+  font-family:'Poppins',sans-serif;
+  font-size:28px;font-weight:800;color:var(--text);
+  margin-bottom:6px;line-height:1.15;
+}
+.screen-sub{font-size:13px;color:var(--text-2);margin-bottom:28px;line-height:1.55;}
+
+.form-group{margin-bottom:16px;}
+.form-label{
+  font-size:11px;font-weight:800;color:var(--text-2);
+  margin-bottom:6px;display:block;
+  text-transform:uppercase;letter-spacing:0.07em;
+}
+.form-input{
+  width:100%;padding:14px 16px;
+  border:1.5px solid var(--border);
+  border-radius:var(--r-sm);
+  font-size:14px;font-family:'Poppins',sans-serif;font-weight:500;
+  color:var(--text);background:var(--white);outline:none;
+  transition:border-color 0.2s,box-shadow 0.2s;
+}
+.form-input:focus{
+  border-color:var(--forest);
+  box-shadow:0 0 0 3px rgba(20,104,129,0.1);
+}
+.form-input::placeholder{color:var(--text-3);}
+select.form-input{cursor:pointer;}
+.signup-footer{padding:16px 26px 32px;}
+
+/* ─── S4: M-Pesa Integration ─── */
+#s-integ{background:var(--white);align-items:center;justify-content:center;text-align:center;padding:40px 28px;}
+.integ-visual{
+  width:110px;height:110px;margin:0 auto 32px;position:relative;
+}
+.integ-outer-ring{
+  position:absolute;inset:0;border-radius:50%;
+  border:2px solid var(--border);
+  border-top-color:var(--forest);
+  animation:spin 1.4s linear infinite;
+}
+.integ-inner-ring{
+  position:absolute;inset:14px;border-radius:50%;
+  border:2px solid var(--lime-light);
+  border-top-color:var(--lime);
+  animation:spin 0.9s linear infinite reverse;
+}
+.integ-core{
+  position:absolute;inset:28px;border-radius:50%;
+  background:var(--forest-light);
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+.integ-progress{
+  width:100%;height:5px;background:var(--border);
+  border-radius:3px;overflow:hidden;margin-top:32px;
+}
+.integ-fill{
+  height:100%;width:0%;border-radius:3px;
+  background:linear-gradient(90deg,var(--forest),var(--lime));
+  transition:width 0.3s ease;
+}
+.integ-steps{
+  display:flex;flex-direction:column;gap:8px;
+  margin-top:24px;width:100%;
+}
+.integ-step{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 14px;border-radius:var(--r-xs);
+  font-size:12px;font-weight:600;color:var(--text-3);
+  background:transparent;transition:all 0.3s;
+  text-align:left;
+}
+.integ-step.done{background:var(--forest-light);color:var(--forest);}
+.integ-step.active{background:var(--lime-light);color:var(--lime-dark);}
+.step-dot{
+  width:18px;height:18px;border-radius:50%;flex-shrink:0;
+  border:1.5px solid currentColor;
+  display:flex;align-items:center;justify-content:center;
+  font-size:9px;
+}
+
+/* ─── S5: Category Allocation ─── */
+#s-alloc{background:var(--cream);}
+.alloc-top{
+  flex-shrink:0;
+  padding:56px 22px 16px;
+}
+.income-hero{
+  border-radius:16px;padding:16px 18px;
+  background:linear-gradient(135deg,var(--forest-dark),var(--forest-mid));
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:4px;
+}
+.income-eyebrow{font-size:10px;font-weight:700;color:rgba(255,255,255,0.6);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px;}
+.income-val{font-family:'Poppins',sans-serif;font-size:28px;font-weight:800;color:white;}
+.income-sub{font-size:11px;color:rgba(255,255,255,0.5);margin-top:2px;}
+.income-badge{
+  background:var(--lime);color:var(--forest-dark);
+  font-size:10px;font-weight:800;padding:4px 10px;
+  border-radius:20px;letter-spacing:0.04em;
+}
+
+.alloc-scroll{flex:1;overflow-y:auto;padding:8px 24px 8px;}
+.alloc-card{
+  background:var(--white);border-radius:14px;
+  padding:14px 16px;margin-bottom:10px;
+  border:1.5px solid var(--border);
+  box-shadow:var(--shadow-card);
+  transition:border-color 0.2s;
+}
+.alloc-card:focus-within{border-color:var(--forest);}
+.alloc-top-row{display:flex;align-items:center;margin-bottom:10px;gap:2px;}
+.alloc-icon{
+  width:38px;height:38px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;
+  cursor:pointer;transition:transform 0.15s;
+}
+.alloc-icon:active{transform:scale(0.9);}
+.alloc-name-input{
+  flex:1;min-width:0;border:none;background:transparent;
+  font-size:14px;font-weight:700;color:var(--text);
+  font-family:'Poppins',sans-serif;
+  padding:6px 8px;border-radius:7px;outline:none;
+  margin-left:8px;transition:background 0.15s;
+}
+.alloc-name-input:focus{background:var(--forest-light);}
+.alloc-name-input::placeholder{color:var(--text-3);font-weight:600;}
+.alloc-delete-btn{
+  width:30px;height:30px;border-radius:8px;flex-shrink:0;
+  border:1.5px solid var(--border);background:var(--white);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--text-3);cursor:pointer;transition:all 0.15s;
+}
+.alloc-delete-btn:hover{background:var(--red-light);border-color:#f3b9b9;color:var(--red);}
+.alloc-amount-row{
+  display:flex;align-items:center;gap:8px;
+  background:var(--cream);border:1.5px solid var(--border);
+  border-radius:10px;padding:9px 12px;
+}
+.alloc-kes-prefix{font-size:12px;font-weight:800;color:var(--text-3);flex-shrink:0;}
+.alloc-amount-input{
+  flex:1;min-width:0;border:none;background:transparent;outline:none;
+  font-size:16px;font-weight:800;color:var(--text);
+  font-family:'Poppins',sans-serif;
+}
+.alloc-amount-input::-webkit-outer-spin-button,
+.alloc-amount-input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
+.alloc-amount-input{-moz-appearance:textfield;}
+.alloc-pct-badge{
+  font-size:12px;font-weight:800;color:var(--forest);
+  background:var(--forest-light);
+  padding:5px 10px;border-radius:8px;flex-shrink:0;min-width:40px;text-align:center;
+}
+.add-cat-row{
+  display:flex;align-items:center;justify-content:center;gap:7px;
+  border:1.5px dashed var(--border-mid);border-radius:14px;
+  padding:14px;color:var(--forest);font-weight:700;font-size:13px;
+  cursor:pointer;margin-top:2px;margin-bottom:16px;
+  transition:all 0.15s;
+}
+.add-cat-row:hover{background:var(--forest-light);border-color:var(--forest);}
+.add-cat-row:active{transform:scale(0.98);}
+
+.alloc-footer{
+  flex-shrink:0;padding:14px 22px 28px;
+  background:var(--white);border-top:1px solid var(--border);
+}
+.total-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.total-label{font-size:13px;font-weight:700;color:var(--text-2);}
+.total-val{
+  font-size:18px;font-weight:900;color:var(--forest);
+  transition:color 0.2s;
+}
+
+/* ─── S6: Review Confirm ─── */
+#s-review{background:var(--cream);}
+.review-body{flex:1;overflow-y:auto;padding:100px 24px 16px;}
+.review-income-card{
+  border-radius:16px;padding:18px;
+  background:linear-gradient(135deg,var(--forest-dark),var(--forest-mid));
+  margin-bottom:20px;position:relative;overflow:hidden;
+}
+.review-income-card::after{
+  content:'';position:absolute;
+  right:-20px;bottom:-20px;
+  width:100px;height:100px;border-radius:50%;
+  background:rgba(74,207,112,0.15);
+}
+.review-income-label{font-size:11px;color:rgba(255,255,255,0.6);font-weight:700;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;}
+.review-income-val{font-family:'Poppins',sans-serif;font-size:32px;font-weight:800;color:white;}
+.review-income-note{font-size:11px;color:rgba(255,255,255,0.5);margin-top:4px;}
+
+.review-item{
+  background:var(--white);border-radius:14px;
+  padding:14px 16px;margin-bottom:10px;
+  border:1.5px solid var(--border);
+  display:flex;align-items:center;gap:12px;
+  box-shadow:var(--shadow-card);
+}
+.review-item-icon{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0;}
+.review-item-name{font-size:14px;font-weight:700;color:var(--text);}
+.review-item-pct{font-size:11px;color:var(--text-3);font-weight:600;margin-top:2px;}
+.review-item-amount{
+  margin-left:auto;font-family:'Poppins',sans-serif;
+  font-size:17px;font-weight:700;color:var(--text);
+}
+
+.review-footer{padding:16px 22px 28px;}
+
+/* ─── S7: Loading ─── */
+#s-loading{background:var(--white);align-items:center;justify-content:center;text-align:center;padding:40px 28px;}
+.loading-visual{
+  position:relative;width:90px;height:90px;margin:0 auto 36px;
+}
+.loading-ring{
+  position:absolute;inset:0;border-radius:50%;
+  border:3px solid var(--border);
+  border-top-color:var(--forest);
+  animation:spin 1s linear infinite;
+}
+.loading-ring2{
+  position:absolute;inset:12px;border-radius:50%;
+  border:3px solid var(--lime-light);
+  border-bottom-color:var(--lime);
+  animation:spin 1.4s linear infinite reverse;
+}
+.loading-inner{
+  position:absolute;inset:24px;border-radius:50%;
+  background:var(--forest-light);
+  display:flex;align-items:center;justify-content:center;font-size:18px;
+}
+
+.loading-dots{display:flex;gap:8px;margin-top:20px;justify-content:center;}
+.ldot{
+  width:7px;height:7px;border-radius:50%;background:var(--border);
+  animation:ldot-pulse 1.4s ease-in-out infinite;
+}
+.ldot:nth-child(2){animation-delay:0.2s;}
+.ldot:nth-child(3){animation-delay:0.4s;}
+@keyframes ldot-pulse{0%,80%,100%{background:var(--border);}40%{background:var(--forest);}}
+
+/* ─── S8: Success ─── */
+#s-success{background:var(--white);align-items:center;justify-content:center;text-align:center;padding:40px 32px;}
+.success-ring{
+  width:100px;height:100px;border-radius:50%;
+  background:linear-gradient(135deg,var(--forest),var(--lime));
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 28px;
+  animation:pop 0.45s cubic-bezier(0.34,1.56,0.64,1);
+  box-shadow:0 12px 36px rgba(20,104,129,0.3);
+}
+@keyframes pop{from{transform:scale(0) rotate(-20deg);opacity:0;}to{transform:none;opacity:1;}}
+
+.success-sparkles{position:relative;display:inline-block;}
+.sparkle{
+  position:absolute;font-size:18px;
+  animation:sparkle-anim 0.6s ease forwards;
+  opacity:0;
+}
+.sp1{top:-20px;left:-24px;animation-delay:0.3s;}
+.sp2{top:-16px;right:-20px;animation-delay:0.45s;}
+.sp3{bottom:-10px;left:-10px;animation-delay:0.5s;}
+@keyframes sparkle-anim{0%{opacity:0;transform:scale(0);}60%{opacity:1;transform:scale(1.2);}100%{opacity:1;transform:scale(1);}}
+
+.success-label{
+  font-size:12px;font-weight:800;letter-spacing:0.12em;
+  text-transform:uppercase;color:var(--lime-dark);margin-bottom:8px;
+}
+.success-title{
+  font-family:'Poppins',sans-serif;
+  font-size:36px;font-weight:800;color:var(--text);margin-bottom:10px;
+}
+.success-sub{font-size:14px;color:var(--text-2);line-height:1.6;margin-bottom:48px;}
+.success-summary{
+  display:flex;gap:20px;justify-content:center;margin-bottom:44px;
+}
+.ss-item{text-align:center;}
+.ss-val{font-family:'Poppins',sans-serif;font-size:20px;font-weight:800;color:var(--forest);}
+.ss-label{font-size:10px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:0.07em;margin-top:2px;}
+
+/* ─── S9: Dashboard ─── */
+#s-dashboard{background:var(--cream);}
+.dash-header{
+  flex-shrink:0;
+  background:linear-gradient(150deg,var(--forest-dark) 0%,var(--forest) 60%,#2FB08C 100%);
+  padding:52px 24px 72px;position:relative;overflow:hidden;
+}
+.dash-header::after{
+  content:'';position:absolute;
+  bottom:-44px;left:-20px;right:-20px;height:90px;
+  background:var(--cream);border-radius:44px 44px 0 0;
+}
+.dash-bg-circle{
+  position:absolute;top:-60px;right:-60px;
+  width:200px;height:200px;border-radius:50%;
+  border:1.5px solid rgba(74,207,112,0.18);
+}
+.dash-greeting{font-size:12px;color:rgba(255,255,255,0.6);font-weight:600;margin-bottom:3px;}
+.dash-name{font-family:'Poppins',sans-serif;font-size:22px;font-weight:800;color:white;margin-bottom:2px;}
+.dash-date{font-size:11px;color:rgba(255,255,255,0.5);}
+
+.dash-income-chip{
+  position:absolute;top:52px;right:22px;z-index:2;
+  background:rgba(255,255,255,0.15);backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,0.2);
+  border-radius:20px;padding:6px 12px;
+  display:flex;flex-direction:column;align-items:flex-end;
+}
+.dic-label{font-size:9px;color:rgba(255,255,255,0.6);font-weight:700;text-transform:uppercase;letter-spacing:0.06em;}
+.dic-val{font-size:16px;font-weight:900;color:white;font-family:'Poppins',sans-serif;}
+
+.dash-score-row{
+  display:grid;grid-template-columns:1fr 1fr;gap:10px;
+  margin-top:12px;position:relative;z-index:2;
+}
+.score-pill{
+  background:rgba(255,255,255,0.12);border-radius:12px;
+  padding:10px 12px;border:1px solid rgba(255,255,255,0.15);
+}
+.score-pill-label{font-size:9px;font-weight:800;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.07em;}
+.score-pill-val{font-size:18px;font-weight:900;color:white;margin-top:2px;}
+.score-pill-bar{height:3px;background:rgba(255,255,255,0.2);border-radius:2px;margin-top:8px;overflow:hidden;}
+.score-pill-fill{height:100%;border-radius:2px;background:var(--lime);}
+
+.dash-scroll{flex:1;overflow-y:auto;padding:0 24px 90px;margin-top:-44px;position:relative;z-index:10;}
+
+.dash-section-label{
+  font-size:11px;font-weight:800;color:var(--text-3);
+  text-transform:uppercase;letter-spacing:0.08em;
+  margin:20px 0 10px;
+}
+
+.budget-card{
+  background:var(--white);border-radius:16px;
+  padding:16px;margin-bottom:12px;
+  border:1.5px solid var(--border);
+  box-shadow:var(--shadow-card);
+}
+.bc-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.bc-icon{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.bc-info{flex:1;}
+.bc-name{font-size:14px;font-weight:700;color:var(--text);}
+.bc-type{font-size:11px;color:var(--text-3);font-weight:600;}
+.bc-remaining{font-family:'Poppins',sans-serif;font-size:22px;font-weight:700;color:var(--text);margin-bottom:4px;}
+.bc-remaining small{font-family:'Poppins',sans-serif;font-size:12px;font-weight:600;color:var(--text-3);}
+.prog-bar{height:6px;background:var(--border);border-radius:3px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:3px;transition:width 0.8s ease;}
+.bc-footer{display:flex;justify-content:space-between;margin-top:8px;}
+.bc-spent{font-size:11px;color:var(--text-3);font-weight:600;}
+.bc-budget{font-size:11px;color:var(--text-2);font-weight:700;}
+
+.savings-card{
+  background:linear-gradient(135deg,var(--forest-dark),var(--forest-mid));
+  border-radius:16px;padding:18px;margin-bottom:12px;
+  position:relative;overflow:hidden;
+}
+.savings-card::before{
+  content:'';position:absolute;top:-30px;right:-30px;
+  width:120px;height:120px;border-radius:50%;
+  background:rgba(74,207,112,0.12);
+}
+.savings-card::after{
+  content:'';position:absolute;bottom:-20px;left:30px;
+  width:80px;height:80px;border-radius:50%;
+  background:rgba(255,255,255,0.05);
+}
+.sc-header{display:flex;align-items:center;gap:10px;margin-bottom:14px;position:relative;z-index:1;}
+.sc-icon{width:40px;height:40px;border-radius:11px;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:20px;}
+.sc-title{font-size:14px;font-weight:700;color:white;}
+.sc-sub{font-size:11px;color:rgba(255,255,255,0.5);font-weight:600;}
+.sc-badge{margin-left:auto;background:var(--lime);color:var(--forest-dark);font-size:10px;font-weight:800;padding:4px 9px;border-radius:20px;}
+.sc-body{position:relative;z-index:1;}
+.sc-amount{font-family:'Poppins',sans-serif;font-size:30px;font-weight:800;color:white;margin-bottom:4px;}
+.sc-progress-bg{height:6px;background:rgba(255,255,255,0.15);border-radius:3px;overflow:hidden;margin-top:10px;}
+.sc-progress-fill{height:100%;background:var(--lime);border-radius:3px;width:30%;}
+
+/* ─── Bottom Nav ─── */
+.bottom-nav{
+  position:absolute;bottom:0;left:0;right:0;height:82px;
+  background:var(--white);border-top:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-around;
+  padding-bottom:6px;z-index:30;
+}
+.nav-btn{
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  font-size:10px;font-weight:700;color:var(--text-3);
+  cursor:pointer;padding:8px 14px;border-radius:12px;
+  transition:color 0.2s;
+}
+.nav-btn.active{color:var(--forest);}
+.nav-btn svg{width:22px;height:22px;}
+.nav-btn.active .nav-indicator{
+  width:20px;height:3px;background:var(--forest);
+  border-radius:2px;margin-top:4px;
+}
+
+/* ─── Dot Pager ─── */
+#dots{
+  position:fixed;bottom:22px;left:50%;transform:translateX(-50%);
+  display:flex;gap:6px;z-index:999;
+}
+.dot{
+  height:6px;border-radius:3px;
+  background:rgba(255,255,255,0.35);
+  transition:all 0.3s ease;
+}
+.dot.active{background:var(--lime);width:20px;}
+.dot:not(.active){width:6px;}
+
+/* ─── Error / Validation States ─── */
+.form-input.error{
+  border-color:var(--red);
+  background:#fff8f8;
+  box-shadow:0 0 0 3px rgba(217,96,95,0.12);
+  animation:shake 0.35s ease;
+}
+.form-input.success-field{
+  border-color:var(--forest);
+  background:#f7fdf9;
+}
+.field-error-msg{
+  font-size:11px;font-weight:700;color:var(--red);
+  margin-top:5px;display:flex;align-items:center;gap:4px;
+  animation:fadeSlideIn 0.2s ease;
+}
+.field-success-msg{
+  font-size:11px;font-weight:700;color:var(--forest);
+  margin-top:5px;display:flex;align-items:center;gap:4px;
+  animation:fadeSlideIn 0.2s ease;
+}
+@keyframes shake{0%,100%{transform:translateX(0);}20%{transform:translateX(-5px);}40%{transform:translateX(5px);}60%{transform:translateX(-4px);}80%{transform:translateX(4px);}}
+@keyframes fadeSlideIn{from{opacity:0;transform:translateY(-4px);}to{opacity:1;transform:none;}}
+
+/* Error glow on alloc cards */
+.alloc-card.amount-error .alloc-amount-row{
+  border-color:var(--red);
+  background:#fff8f8;
+  box-shadow:0 0 0 3px rgba(217,96,95,0.1);
+  animation:shake 0.35s ease;
+}
+.alloc-card.name-error .alloc-name-input{
+  background:#fff0f0;
+  outline:2px solid var(--red);
+  outline-offset:1px;
+  animation:shake 0.35s ease;
+}
+
+/* ─── Toast notification ─── */
+.toast{
+  position:absolute;bottom:96px;left:16px;right:16px;z-index:200;
+  padding:12px 16px;border-radius:12px;
+  display:flex;align-items:center;gap:10px;
+  font-size:13px;font-weight:700;
+  box-shadow:0 8px 24px rgba(0,0,0,0.15);
+  animation:toastIn 0.28s cubic-bezier(0.34,1.56,0.64,1);
+  pointer-events:none;
+}
+@keyframes toastIn{from{opacity:0;transform:translateY(20px) scale(0.95);}to{opacity:1;transform:none;}}
+.toast.error{background:var(--red);color:white;}
+.toast.warning{background:#C17B1A;color:white;}
+.toast.success{background:var(--forest);color:white;}
+.toast.info{background:#1A4F8A;color:white;}
+.toast-icon{font-size:16px;flex-shrink:0;}
+
+/* ─── Empty States ─── */
+.empty-state{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:40px 24px;text-align:center;
+}
+.empty-icon{
+  font-size:48px;margin-bottom:16px;
+}
+.empty-title{font-family:'Poppins',sans-serif;font-size:18px;font-weight:800;color:var(--text);margin-bottom:8px;}
+.empty-sub{font-size:13px;color:var(--text-2);line-height:1.6;margin-bottom:20px;}
+.empty-action{
+  padding:11px 24px;border-radius:10px;font-size:13px;font-weight:800;
+  background:var(--forest-light);color:var(--forest);border:1.5px solid var(--border-mid);
+  cursor:pointer;font-family:'Poppins',sans-serif;transition:all 0.15s;
+}
+.empty-action:hover{background:var(--forest);color:white;}
+
+/* ─── Alloc zero-amount warning strip ─── */
+.alloc-warn-strip{
+  display:flex;align-items:center;gap:8px;
+  background:#FBEEE0;border:1.5px solid #D9A876;border-radius:10px;
+  padding:10px 12px;margin-bottom:10px;font-size:12px;font-weight:700;color:#8A5C0A;
+  animation:fadeSlideIn 0.2s ease;
+}
+
+/* ─── Receive M-Pesa Modal ─── */
+.modal-backdrop{
+  position:absolute;inset:0;z-index:100;
+  background:rgba(0,0,0,0.45);
+  display:flex;align-items:flex-end;
+  opacity:0;pointer-events:none;
+  transition:opacity 0.25s ease;
+}
+.modal-backdrop.open{opacity:1;pointer-events:all;}
+.modal-sheet{
+  width:100%;background:var(--white);
+  border-radius:24px 24px 0 0;
+  padding:0 24px 36px;
+  transform:translateY(100%);
+  transition:transform 0.3s cubic-bezier(0.34,1.2,0.64,1);
+}
+.modal-backdrop.open .modal-sheet{transform:none;}
+.modal-handle{width:36px;height:4px;border-radius:2px;background:var(--border);margin:14px auto 20px;}
+.modal-sheet-title{font-family:'Poppins',sans-serif;font-size:22px;font-weight:800;color:var(--text);margin-bottom:4px;}
+.modal-sheet-sub{font-size:13px;color:var(--text-2);margin-bottom:22px;line-height:1.5;}
+.amount-input-big{
+  width:100%;border:none;border-bottom:2.5px solid var(--border);
+  font-family:'Poppins',sans-serif;font-size:36px;font-weight:800;
+  color:var(--text);padding:8px 0;outline:none;background:transparent;
+  text-align:center;transition:border-color 0.2s;
+}
+.amount-input-big:focus{border-color:var(--forest);}
+.amount-input-big.error-field{border-color:var(--red);animation:shake 0.35s ease;}
+.sender-input{
+  width:100%;border:1.5px solid var(--border);border-radius:10px;
+  padding:12px 14px;font-size:14px;font-family:'Poppins',sans-serif;
+  color:var(--text);outline:none;margin-top:16px;
+  transition:border-color 0.2s;
+}
+.sender-input:focus{border-color:var(--forest);}
+.quick-amounts{display:flex;gap:8px;margin:14px 0 4px;flex-wrap:wrap;}
+.quick-amt{
+  padding:7px 14px;border-radius:20px;
+  background:var(--forest-light);color:var(--forest);
+  font-size:12px;font-weight:800;cursor:pointer;
+  border:1.5px solid var(--border-mid);transition:all 0.15s;
+}
+.quick-amt:hover{background:var(--forest);color:white;}
+
+/* ─── Split receipt notification ─── */
+.split-receipt{
+  position:absolute;inset:0;z-index:110;
+  background:rgba(0,0,0,0.5);
+  display:flex;align-items:center;justify-content:center;
+  padding:20px;
+  opacity:0;pointer-events:none;
+  transition:opacity 0.25s;
+}
+.split-receipt.open{opacity:1;pointer-events:all;}
+.split-card{
+  background:var(--white);border-radius:20px;
+  width:100%;padding:24px;
+  box-shadow:0 20px 60px rgba(0,0,0,0.25);
+  transform:scale(0.9);
+  transition:transform 0.3s cubic-bezier(0.34,1.3,0.64,1);
+}
+.split-receipt.open .split-card{transform:none;}
+.split-receipt-amount{font-family:'Poppins',sans-serif;font-size:32px;font-weight:800;color:var(--forest);text-align:center;margin-bottom:4px;}
+.split-receipt-from{font-size:12px;color:var(--text-3);font-weight:700;text-align:center;margin-bottom:18px;}
+.split-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);}
+.split-row:last-child{border-bottom:none;}
+.split-row-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+.split-row-name{font-size:13px;font-weight:700;color:var(--text);flex:1;}
+.split-row-pct{font-size:11px;color:var(--text-3);font-weight:700;}
+.split-row-amount{font-size:14px;font-weight:800;color:var(--forest);text-align:right;}
+.split-surplus-row{background:var(--forest-light);border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:10px;margin-top:10px;}
+
+/* ─── Category target cards on dashboard ─── */
+.cat-target-card{
+  background:var(--white);border-radius:16px;padding:16px;
+  margin-bottom:12px;border:1.5px solid var(--border);
+  box-shadow:var(--shadow-card);
+}
+.ctc-header{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.ctc-icon{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.ctc-name{font-size:14px;font-weight:700;color:var(--text);}
+.ctc-sub{font-size:11px;color:var(--text-3);margin-top:2px;}
+.ctc-pct{font-size:12px;font-weight:800;background:var(--forest-light);color:var(--forest);padding:4px 10px;border-radius:20px;margin-left:auto;}
+.ctc-amounts{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;}
+.ctc-received{font-family:'Poppins',sans-serif;font-size:22px;font-weight:700;color:var(--text);}
+.ctc-target{font-size:12px;color:var(--text-3);}
+.ctc-prog{height:6px;background:var(--border);border-radius:3px;overflow:hidden;}
+.ctc-prog-fill{height:100%;border-radius:3px;transition:width 0.7s ease;}
+
+/* ─── Receipt history items ─── */
+.receipt-item{
+  background:var(--white);border-radius:14px;margin-bottom:10px;
+  border:1.5px solid var(--border);box-shadow:var(--shadow-card);
+  overflow:hidden;
+}
+.receipt-header{
+  display:flex;align-items:center;gap:12px;
+  padding:14px 16px 10px;cursor:pointer;
+}
+.receipt-amount{font-family:'Poppins',sans-serif;font-size:18px;font-weight:800;color:var(--forest);}
+.receipt-from{font-size:11px;color:var(--text-3);font-weight:700;margin-top:2px;}
+.receipt-time{font-size:11px;color:var(--text-3);font-weight:600;margin-left:auto;text-align:right;}
+.receipt-splits{border-top:1px solid var(--border);padding:8px 16px 12px;}
+.receipt-split-row{display:flex;align-items:center;justify-content:space-between;padding:5px 0;}
+.receipt-split-cat{font-size:12px;color:var(--text-2);font-weight:600;display:flex;align-items:center;gap:6px;}
+.receipt-split-amt{font-size:12px;font-weight:800;color:var(--text);}
+.receipt-surplus-badge{font-size:10px;font-weight:800;background:var(--forest-light);color:var(--forest);padding:2px 8px;border-radius:10px;}
+
+</style>
+</head>
+<body>
+
+<div class="phone">
+<div class="phone-notch"></div>
+<div class="phone-home-indicator"></div>
+
+  <!-- ══ S1: Welcome ══ -->
+  <div id="s-welcome" class="screen active">
+    <div class="status-bar light"><span class="s-time">9:41</span><div class="s-icons">
+      <svg width="16" height="11" fill="white" viewBox="0 0 16 11"><rect x="0" y="4" width="3" height="7" rx="1"/><rect x="4" y="2.5" width="3" height="8.5" rx="1" opacity=".7"/><rect x="8" y="1" width="3" height="10" rx="1" opacity=".5"/><rect x="12" y="0" width="3" height="11" rx="1" opacity=".3"/></svg>
+      <svg width="15" height="11" fill="none" viewBox="0 0 15 11"><rect x="1" y="3" width="13" height="7" rx="1.5" stroke="white" stroke-width="1.2"/><rect x="14" y="5" width="1.5" height="3" rx="0.5" fill="white" opacity=".5"/><rect x="2" y="4" width="9" height="5" rx=".8" fill="white"/></svg>
+    </div></div>
+    <div class="welcome-inner">
+      <div class="welcome-center">
+        <div class="splash-logo"><span class="splash-logo-w">walle</span><svg viewBox="0 0 40 48" width="34" height="41" fill="none" style="margin-left:2px;transform:translateY(-6px);"><defs><linearGradient id="wlg1" x1="2" y1="2" x2="36" y2="46" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#4ACF70"/><stop offset="100%" stop-color="#146881"/></linearGradient></defs><path d="M19 3 L19 45" stroke="url(#wlg1)" stroke-width="6" stroke-linecap="round"/><path d="M19 15 L37 15" stroke="url(#wlg1)" stroke-width="6" stroke-linecap="round"/><path d="M3 25 C12 35, 20 35, 36 45" stroke="url(#wlg1)" stroke-width="6" stroke-linecap="round"/></svg></div>
+        <p class="splash-tagline">Smart Money. Better Future.</p>
+      </div>
+      <button class="btn-lime" style="max-width:290px;width:100%;" onclick="go('s-intro')">Get Started</button>
+    </div>
+  </div>
+
+  <!-- ══ S2: Intro ══ -->
+  <div id="s-intro" class="screen">
+    <div class="status-bar dark"><span class="s-time" style="color:var(--text)">9:41</span></div>
+    <button class="back-btn on-light" onclick="go('s-welcome')">
+      <svg width="18" height="18" fill="none" viewBox="0 0 18 18"><path d="M11 4L6 9l5 5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <div class="intro-hero">
+      <div class="intro-brand-mark"><span class="intro-brand-w">walle</span><svg viewBox="0 0 40 48" width="19" height="23" fill="none" style="margin-left:1px;transform:translateY(-3px);"><defs><linearGradient id="wlg2" x1="2" y1="2" x2="36" y2="46" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#4ACF70"/><stop offset="100%" stop-color="#146881"/></linearGradient></defs><path d="M19 3 L19 45" stroke="url(#wlg2)" stroke-width="7" stroke-linecap="round"/><path d="M19 15 L37 15" stroke="url(#wlg2)" stroke-width="7" stroke-linecap="round"/><path d="M3 25 C12 35, 20 35, 36 45" stroke="url(#wlg2)" stroke-width="7" stroke-linecap="round"/></svg></div>
+      <div class="intro-hero-ring"></div>
+      <div class="intro-hero-gfx">💳</div>
+    </div>
+    <div class="intro-body">
+      <div class="intro-headline">Automatic daily budget management</div>
+      <div class="intro-sub-head">Backed by Wallex's smart budgeting tools to help you build lasting habits.</div>
+      <div class="feature-row">
+        <div class="feat-icon-wrap" style="background:var(--forest-light);">💸</div>
+        <div><div class="feat-title">Income splits automatically</div><div class="feat-desc">Connect M-Pesa and your income is instantly divided into smart spending categories</div></div>
+      </div>
+      <div class="feature-row">
+        <div class="feat-icon-wrap" style="background:var(--lime-light);">📊</div>
+        <div><div class="feat-title">See daily category limits</div><div class="feat-desc">Know exactly how much you can spend today in each bucket — no surprises</div></div>
+      </div>
+      <div class="feature-row">
+        <div class="feat-icon-wrap" style="background:var(--gold-light);">🛡️</div>
+        <div><div class="feat-title">Overspending alerts</div><div class="feat-desc">Wallex warns you before you exceed your budget with smart notifications</div></div>
+      </div>
+      <div class="feature-row">
+        <div class="feat-icon-wrap" style="background:var(--teal-light);">🏆</div>
+        <div><div class="feat-title">Earn Wallex points</div><div class="feat-desc">Hit your savings goals and earn Wallex rewards with partner brands</div></div>
+      </div>
+    </div>
+    <div class="intro-footer">
+      <button class="btn-primary" onclick="go('s-signup')">Continue</button>
+    </div>
+  </div>
+
+  <!-- ══ S3: Sign Up ══ -->
+  <div id="s-signup" class="screen">
+    <div class="status-bar dark"><span class="s-time" style="color:var(--text)">9:41</span></div>
+    <button class="back-btn on-light" onclick="go('s-intro')">
+      <svg width="18" height="18" fill="none" viewBox="0 0 18 18"><path d="M11 4L6 9l5 5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <div class="signup-body">
+      <div class="screen-eyebrow">Step 1 of 4</div>
+      <h2 class="screen-title">Create your<br/>Wallex account</h2>
+      <p class="screen-sub">Your account details. You'll connect your financial services in the next step.</p>
+      <div class="form-group" id="fg-name">
+        <label class="form-label">Full Name</label>
+        <input class="form-input" type="text" placeholder="e.g. Amina Ochieng" id="inp-name" oninput="liveValidate('name')" onblur="liveValidate('name')"/>
+        <div id="err-name" style="display:none;" class="field-error-msg"><svg width="12" height="12" fill="none" viewBox="0 0 12 12"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.4"/><path d="M6 4v2.5M6 8h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><span id="err-name-text"></span></div>
+      </div>
+      <div class="form-group" id="fg-id">
+        <label class="form-label">National ID Number</label>
+        <input class="form-input" type="text" placeholder="12345678" id="inp-id" inputmode="numeric" oninput="liveValidate('id')" onblur="liveValidate('id')"/>
+        <div id="err-id" style="display:none;" class="field-error-msg"><svg width="12" height="12" fill="none" viewBox="0 0 12 12"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.4"/><path d="M6 4v2.5M6 8h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><span id="err-id-text"></span></div>
+      </div>
+      <div class="form-group" id="fg-email">
+        <label class="form-label">Email Address</label>
+        <input class="form-input" type="email" placeholder="amina@email.com" id="inp-email" oninput="liveValidate('email')" onblur="liveValidate('email')"/>
+        <div id="err-email" style="display:none;" class="field-error-msg"><svg width="12" height="12" fill="none" viewBox="0 0 12 12"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.4"/><path d="M6 4v2.5M6 8h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><span id="err-email-text"></span></div>
+      </div>
+      <div class="form-group" id="fg-user">
+        <label class="form-label">Username</label>
+        <input class="form-input" type="text" placeholder="amina.ochieng" id="inp-user" oninput="liveValidate('user')" onblur="liveValidate('user')"/>
+        <div id="err-user" style="display:none;" class="field-error-msg"><svg width="12" height="12" fill="none" viewBox="0 0 12 12"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.4"/><path d="M6 4v2.5M6 8h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><span id="err-user-text"></span></div>
+        <div id="ok-user" style="display:none;" class="field-success-msg"><svg width="12" height="12" fill="none" viewBox="0 0 12 12"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.4"/><path d="M3.5 6l2 2 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Username available</div>
+      </div>
+      <div class="form-group" id="fg-pw">
+        <label class="form-label">Password</label>
+        <div class="form-input-password-wrap">
+          <input class="form-input" type="password" placeholder="Min. 8 characters" id="inp-pw" oninput="liveValidate('pw')" onblur="liveValidate('pw')"/>
+          <button class="pw-toggle" type="button" onclick="togglePw('inp-pw',this)" tabindex="-1"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/></svg></button>
+        </div>
+        <div id="err-pw" style="display:none;" class="field-error-msg"><svg width="12" height="12" fill="none" viewBox="0 0 12 12"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.4"/><path d="M6 4v2.5M6 8h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><span id="err-pw-text"></span></div>
+      </div>
+      <div class="form-group" id="fg-pw2">
+        <label class="form-label">Confirm Password</label>
+        <div class="form-input-password-wrap">
+          <input class="form-input" type="password" placeholder="Repeat password" id="inp-pw2" oninput="liveValidate('pw2')" onblur="liveValidate('pw2')"/>
+          <button class="pw-toggle" type="button" onclick="togglePw('inp-pw2',this)" tabindex="-1"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/></svg></button>
+        </div>
+        <div id="err-pw2" style="display:none;" class="field-error-msg"><svg width="12" height="12" fill="none" viewBox="0 0 12 12"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.4"/><path d="M6 4v2.5M6 8h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><span id="err-pw2-text"></span></div>
+        <div id="ok-pw2" style="display:none;" class="field-success-msg"><svg width="12" height="12" fill="none" viewBox="0 0 12 12"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.4"/><path d="M3.5 6l2 2 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Passwords match</div>
+      </div>
+    </div>
+    <div class="signup-footer">
+      <button class="btn-primary" onclick="validateAndSubmitSignup()">Create Account →</button>
+      <div style="text-align:center;margin-top:14px;font-size:13px;color:var(--text-3);">Already have an account? <span style="color:var(--forest);font-weight:800;cursor:pointer;" onclick="go('s-login')">Sign in</span></div>
+    </div>
+  </div>
+
+  <!-- ══ S-LOGIN: Returning user ══ -->
+  <div id="s-login" class="screen">
+    <div class="status-bar dark"><span class="s-time" style="color:var(--text)">9:41</span></div>
+    <button class="back-btn on-light" onclick="go('s-welcome')">
+      <svg width="18" height="18" fill="none" viewBox="0 0 18 18"><path d="M11 4L6 9l5 5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <div class="login-body">
+      <div style="margin-bottom:28px;">
+        <div class="screen-eyebrow">Welcome back</div>
+        <h2 class="screen-title">Sign in to<br/>Wallex</h2>
+      </div>
+      <div class="form-group" id="fg-login-user">
+        <label class="form-label">Username or Email</label>
+        <input class="form-input" type="text" placeholder="amina.ochieng" id="inp-login-user" oninput="clearLoginError()"/>
+        <div id="err-login-user" style="display:none;" class="field-error-msg"><svg width="12" height="12" fill="none" viewBox="0 0 12 12"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.4"/><path d="M6 4v2.5M6 8h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><span id="err-login-user-text">Username is required</span></div>
+      </div>
+      <div class="form-group" id="fg-login-pw">
+        <label class="form-label">Password</label>
+        <div class="form-input-password-wrap">
+          <input class="form-input" type="password" placeholder="Your password" id="inp-login-pw" oninput="clearLoginError()" onkeydown="if(event.key==='Enter')submitLogin()"/>
+          <button class="pw-toggle" type="button" onclick="togglePw('inp-login-pw',this)" tabindex="-1"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/></svg></button>
+        </div>
+        <div id="err-login-pw" style="display:none;" class="field-error-msg"><svg width="12" height="12" fill="none" viewBox="0 0 12 12"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.4"/><path d="M6 4v2.5M6 8h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><span id="err-login-pw-text">Password is required</span></div>
+      </div>
+      <span class="forgot-link" onclick="showToast('Password reset email sent ✓','success','s-login-toast',3000)">Forgot password?</span>
+      <div id="s-login-toast" style="margin-bottom:12px;"></div>
+      <div id="login-error" style="display:none;background:var(--red-light);border:1px solid #f5b8b8;border-radius:10px;padding:10px 14px;font-size:12px;font-weight:700;color:var(--red);margin-bottom:16px;animation:fadeSlideIn 0.2s ease;">Incorrect username or password. Please try again.</div>
+      <button class="btn-primary" onclick="submitLogin()">Sign In</button>
+      <div class="login-divider"><span>or</span></div>
+      <button class="login-social-btn" onclick="showToast('Google sign-in coming soon','info','s-login-toast',2000)">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M15.5 8.17c0-.57-.05-1.11-.14-1.64H8v3.1h4.2a3.6 3.6 0 01-1.56 2.36v1.96h2.52c1.48-1.36 2.34-3.36 2.34-5.78z" fill="#4285F4"/><path d="M8 16c2.1 0 3.86-.7 5.15-1.88l-2.52-1.96c-.7.47-1.6.75-2.63.75-2.02 0-3.73-1.37-4.34-3.2H1.07v2.02A7.99 7.99 0 008 16z" fill="#34A853"/><path d="M3.66 9.71A4.82 4.82 0 013.4 8c0-.59.1-1.17.26-1.71V4.27H1.07A8 8 0 000 8c0 1.29.31 2.51.86 3.59l2.8-2.88z" fill="#FBBC05"/><path d="M8 3.18c1.14 0 2.16.39 2.96 1.16l2.22-2.22A7.96 7.96 0 008 0a7.99 7.99 0 00-6.93 4.02l2.59 2.02C4.27 4.55 5.98 3.18 8 3.18z" fill="#EA4335"/></svg>
+        Continue with Google
+      </button>
+      <div style="text-align:center;margin-top:16px;font-size:13px;color:var(--text-3);">Don't have an account? <span style="color:var(--forest);font-weight:800;cursor:pointer;" onclick="go('s-signup')">Create one</span></div>
+    </div>
+  </div>
+
+  <!-- ══ S-SERVICES: Connect financial services ══ -->
+  <div id="s-services" class="screen">
+    <div class="status-bar dark"><span class="s-time" style="color:var(--text)">9:41</span></div>
+    <button class="back-btn on-light" onclick="go('s-signup')">
+      <svg width="18" height="18" fill="none" viewBox="0 0 18 18"><path d="M11 4L6 9l5 5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <div class="services-body">
+      <div class="screen-eyebrow">Step 2 of 4</div>
+      <h2 class="screen-title">Connect your<br/>financial services</h2>
+      <p class="screen-sub" style="margin-bottom:16px;">Link the accounts you use to send and receive money. Connect at least one to continue. You can add more later.</p>
+      <div id="services-connected-count" style="display:none;" class="services-connected-strip">
+        <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.6"/><path d="M5 8l2 2 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        <span id="services-connected-label">0 services connected</span>
+      </div>
+      <div id="services-list"></div>
+    </div>
+    <div style="padding:14px 22px 32px;background:var(--white);border-top:1px solid var(--border);">
+      <button class="btn-primary" id="services-continue-btn" onclick="goToServicesNext()" disabled style="opacity:0.4;">Connect at least one to continue</button>
+    </div>
+  </div>
+
+  <!-- ══ S4: Connection animation (dynamic per-service) ══ -->
+  <div id="s-integ" class="screen">
+    <div class="status-bar dark"><span class="s-time" style="color:var(--text)">9:41</span></div>
+    <button class="back-btn on-light" onclick="go('s-services')">
+      <svg width="18" height="18" fill="none" viewBox="0 0 18 18"><path d="M11 4L6 9l5 5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 32px;text-align:center;">
+      <div class="integ-visual">
+        <div class="integ-outer-ring"></div>
+        <div class="integ-inner-ring"></div>
+        <div class="integ-core" id="integ-service-icon">📱</div>
+      </div>
+      <div style="font-size:11px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:var(--lime-dark);margin-bottom:8px;">Connecting</div>
+      <h2 style="font-family:'Poppins',sans-serif;font-size:22px;font-weight:800;color:var(--text);margin-bottom:8px;" id="integ-service-name">Linking service…</h2>
+      <p style="font-size:13px;color:var(--text-2);line-height:1.6;margin-bottom:28px;" id="integ-service-sub">Securely verifying your account</p>
+      <div class="integ-progress"><div class="integ-fill" id="integ-fill"></div></div>
+      <div class="integ-steps" id="integ-steps">
+        <div class="integ-step" id="istep0"><div class="step-dot">1</div>Authenticating</div>
+        <div class="integ-step" id="istep1"><div class="step-dot">2</div>Verifying account</div>
+        <div class="integ-step" id="istep2"><div class="step-dot">3</div>Linking wallet</div>
+        <div class="integ-step" id="istep3"><div class="step-dot">✓</div>Account connected</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ S5: Category Allocation ══ -->
+  <div id="s-alloc" class="screen">
+    <div class="status-bar dark" style="position:relative;"><span class="s-time" style="color:var(--text)">9:41</span></div>
+    <button class="back-btn on-light" style="top:52px;" onclick="go('s-alloc-back')">
+      <svg width="18" height="18" fill="none" viewBox="0 0 18 18"><path d="M11 4L6 9l5 5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <div class="alloc-top">
+      <div style="padding-left:44px;margin-bottom:14px;">
+        <div class="screen-eyebrow">Step 3 of 4</div>
+        <h2 style="font-family:'Poppins',sans-serif;font-size:22px;font-weight:800;color:var(--text);margin-top:4px;">Set your<br/>targets</h2>
+        <p style="font-size:12.5px;color:var(--text-2);margin-top:6px;line-height:1.5;">Enter a target for each category. Every M-Pesa payment you receive will be split automatically by these percentages.</p>
+      </div>
+      <div class="income-hero">
+        <div>
+          <div class="income-eyebrow">Split rule summary</div>
+          <div class="income-val" id="budget-total-live">0% set</div>
+          <div class="income-sub" id="budget-cat-count">Across 0 categories</div>
+        </div>
+        <div class="income-badge">LIVE</div>
+      </div>
+    </div>
+    <div class="alloc-scroll">
+      <div id="alloc-items"></div>
+      <!-- Surplus auto row -->
+      <div class="surplus-auto-row" id="surplus-auto-row" style="display:none;">
+        <div style="flex:1;">
+          <div style="font-size:13px;font-weight:800;color:var(--forest);">💰 Surplus (automatic)</div>
+          <div style="font-size:11px;color:var(--text-2);margin-top:3px;">Any remainder from each payment lands here</div>
+        </div>
+        <div class="surplus-auto-pct" id="surplus-auto-pct">0%</div>
+      </div>
+      <div class="add-cat-row" onclick="addCategory()">
+        <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        Add category
+      </div>
+    </div>
+    <div class="alloc-footer">
+      <div id="alloc-toast-host" style="margin-bottom:8px;"></div>
+      <div class="total-row">
+        <span class="total-label">Total Target</span>
+        <span class="total-val" id="alloc-total">KES 0</span>
+      </div>
+      <button class="btn-primary" onclick="goReview()">Review Split →</button>
+    </div>
+  </div>
+
+  <!-- ══ S6: Review ══ -->
+  <div id="s-review" class="screen">
+    <div class="status-bar dark" style="position:relative;"><span class="s-time" style="color:var(--text)">9:41</span></div>
+    <button class="back-btn on-light" style="top:52px;" onclick="go('s-alloc')">
+      <svg width="18" height="18" fill="none" viewBox="0 0 18 18"><path d="M11 4L6 9l5 5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <div class="review-body">
+      <div class="screen-eyebrow">Step 4 of 4</div>
+      <h2 class="screen-title" style="margin-top:4px;">Your auto-split<br/>rule</h2>
+      <p class="screen-sub">Every M-Pesa payment you receive will be instantly split by these percentages. Any excess above your total target goes to <strong>Surplus</strong>.</p>
+      <div class="review-income-card">
+        <div class="review-income-label">Total Monthly Target</div>
+        <div class="review-income-val" id="review-total-val">KES 0</div>
+        <div class="review-income-note" id="review-total-note">Split across 0 categories</div>
+      </div>
+      <div id="review-items"></div>
+      <!-- Surplus explainer -->
+      <div style="display:flex;align-items:flex-start;gap:12px;background:var(--forest-light);border:1.5px solid var(--border-mid);border-radius:14px;padding:14px 16px;margin-top:4px;">
+        <div style="font-size:20px;flex-shrink:0;">💰</div>
+        <div>
+          <div style="font-size:13px;font-weight:800;color:var(--forest);">Surplus Category</div>
+          <div style="font-size:12px;color:var(--text-2);margin-top:3px;line-height:1.5;">Any payment that exceeds your KES <span id="review-surplus-target">0</span> target goes here automatically — a bonus buffer you can allocate later.</div>
+        </div>
+      </div>
+    </div>
+    <div class="review-footer">
+      <button class="btn-primary" onclick="go('s-loading')">Activate Auto-Split</button>
+    </div>
+  </div>
+
+  <!-- ══ S7: Loading ══ -->
+  <div id="s-loading" class="screen">
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px;text-align:center;">
+      <div class="loading-visual">
+        <div class="loading-ring"></div>
+        <div class="loading-ring2"></div>
+        <div class="loading-inner">💳</div>
+      </div>
+      <h2 style="font-family:'Poppins',sans-serif;font-size:22px;font-weight:800;color:var(--text);margin-bottom:8px;">Applying your split</h2>
+      <p style="font-size:13px;color:var(--text-2);line-height:1.6;">Setting up your daily budgets and<br/>configuring M-Pesa notifications…</p>
+      <div class="loading-dots"><div class="ldot"></div><div class="ldot"></div><div class="ldot"></div></div>
+    </div>
+  </div>
+
+  <!-- ══ S8: Success ══ -->
+  <div id="s-success" class="screen">
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 32px;text-align:center;">
+      <div class="success-sparkles">
+        <span class="sparkle sp1">✨</span>
+        <span class="sparkle sp2">🌟</span>
+        <span class="sparkle sp3">💫</span>
+        <div class="success-ring">
+          <svg width="40" height="40" fill="none" viewBox="0 0 40 40"><path d="M10 20l7 7 13-14" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+      </div>
+      <div class="success-label">You're all set</div>
+      <h2 class="success-title">Budget<br/>Activated!</h2>
+      <p class="success-sub">Your daily split is live. Your M-Pesa income will be automatically managed from today.</p>
+      <div class="success-summary">
+        <div class="ss-item"><div class="ss-val" id="ss-cat-count">4</div><div class="ss-label">Categories</div></div>
+        <div style="width:1px;background:var(--border);"></div>
+        <div class="ss-item"><div class="ss-val" id="ss-daily-limit">KES 2,667</div><div class="ss-label">Daily limit</div></div>
+        <div style="width:1px;background:var(--border);"></div>
+        <div class="ss-item"><div class="ss-val">30</div><div class="ss-label">Day span</div></div>
+      </div>
+      <button class="btn-primary" style="max-width:280px;" onclick="pinFlowMode='setup';go('s-pin')">Set up PIN &amp; Enter Dashboard</button>
+      <button class="btn-ghost" style="max-width:280px;margin-top:10px;" onclick="go('s-alloc')">Adjust my split</button>
+    </div>
+  </div>
+
+  <!-- ══ S8.5: Set Security PIN (NEW) ══ -->
+  <div id="s-pin" class="screen">
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 32px;text-align:center;">
+      <div class="pin-icon-circle">🔐</div>
+      <h2 id="pin-title" style="font-family:'Poppins',sans-serif;font-size:20px;font-weight:800;color:var(--text);margin-bottom:8px;max-width:300px;">Choose a 4-digit PIN to secure your wallet</h2>
+      <p id="pin-sub" style="font-size:13px;color:var(--text-2);line-height:1.6;max-width:280px;">You'll use this PIN to unlock Wallex</p>
+
+      <div id="pin-dots" class="pin-dots-wrap">
+        <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
+      </div>
+      <div id="pin-error" class="pin-error">PINs didn't match. Try again.</div>
+
+      <div id="pin-keypad" class="pin-keypad">
+        <div class="pin-key" onclick="pinPress('1')">1</div>
+        <div class="pin-key" onclick="pinPress('2')">2</div>
+        <div class="pin-key" onclick="pinPress('3')">3</div>
+        <div class="pin-key" onclick="pinPress('4')">4</div>
+        <div class="pin-key" onclick="pinPress('5')">5</div>
+        <div class="pin-key" onclick="pinPress('6')">6</div>
+        <div class="pin-key" onclick="pinPress('7')">7</div>
+        <div class="pin-key" onclick="pinPress('8')">8</div>
+        <div class="pin-key" onclick="pinPress('9')">9</div>
+        <div class="pin-key empty"></div>
+        <div class="pin-key" onclick="pinPress('0')">0</div>
+        <div class="pin-key backspace" onclick="pinBackspace()">⌫</div>
+      </div>
+
+      <div class="pin-bio-btn" onclick="pinBiometric()"><span style="font-size:16px;">🆔</span> Use Face ID / Fingerprint instead</div>
+
+      <div id="pin-live" class="sr-only" aria-live="polite"></div>
+    </div>
+  </div>
+
+
+  <!-- ══ S9: Dashboard with full tab navigation ══ -->
+  <div id="s-dashboard" class="screen">
+  <div id="toast-host" style="position:absolute;bottom:92px;left:0;right:0;z-index:200;padding:0 16px;pointer-events:none;"></div>
+
+  <!-- M-Pesa incoming notification banner -->
+  <div class="mpesa-notif" id="mpesa-notif">
+    <div class="mpesa-notif-icon">📲</div>
+    <div>
+      <div class="mpesa-notif-title" id="mpesa-notif-amount">KES 0 received</div>
+      <div class="mpesa-notif-sub" id="mpesa-notif-sender">Splitting now…</div>
+    </div>
+    <div style="margin-left:auto;background:rgba(255,255,255,0.2);border-radius:20px;padding:4px 10px;font-size:11px;font-weight:800;color:white;">M-PESA</div>
+  </div>
+
+  <!-- Splitting animation overlay -->
+  <div class="split-animate-overlay" id="split-overlay">
+    <div class="split-spinner"></div>
+    <div class="split-animate-label">Splitting payment…</div>
+    <div class="split-animate-sub">Distributing across your categories</div>
+  </div>
+
+  <!-- Receive M-Pesa Modal -->
+  <div class="modal-backdrop" id="receive-modal" onclick="closeReceiveModal(event)">
+    <div class="modal-sheet" onclick="event.stopPropagation()">
+      <div class="modal-handle"></div>
+      <div class="modal-sheet-title">Receive M-Pesa</div>
+      <div class="modal-sheet-sub">Enter the amount received. It will be split automatically across your categories.</div>
+      <div style="text-align:center;font-size:14px;font-weight:700;color:var(--text-3);margin-bottom:8px;">KES</div>
+      <input class="amount-input-big" id="receive-amount" type="number" inputmode="numeric" min="1" placeholder="0" oninput="clearReceiveError()"/>
+      <div id="receive-err" style="display:none;font-size:11px;font-weight:700;color:var(--red);text-align:center;margin-top:8px;animation:fadeSlideIn 0.2s ease;"></div>
+      <input class="sender-input" id="receive-sender" type="text" placeholder="Sender name (optional, e.g. Brian Omondi)"/>
+      <div style="font-size:11px;font-weight:700;color:var(--text-3);margin-top:14px;margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em;">Quick amounts</div>
+      <div class="quick-amounts">
+        <div class="quick-amt" onclick="setQuickAmount(5000)">KES 5K</div>
+        <div class="quick-amt" onclick="setQuickAmount(10000)">KES 10K</div>
+        <div class="quick-amt" onclick="setQuickAmount(25000)">KES 25K</div>
+        <div class="quick-amt" onclick="setQuickAmount(50000)">KES 50K</div>
+        <div class="quick-amt" onclick="setQuickAmount(100000)">KES 100K</div>
+      </div>
+      <button class="btn-primary" style="margin-top:20px;" onclick="processPayment()">Split Now →</button>
+    </div>
+  </div>
+
+  <!-- Split Receipt Overlay -->
+  <div class="split-receipt" id="split-receipt">
+    <div class="split-card">
+      <div style="text-align:center;margin-bottom:16px;">
+        <div style="width:48px;height:48px;border-radius:50%;background:var(--forest);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;animation:pop 0.4s cubic-bezier(0.34,1.56,0.64,1);">
+          <svg width="22" height="22" fill="none" viewBox="0 0 22 22"><path d="M5 11l4 4 8-8" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div style="font-size:11px;font-weight:800;color:var(--lime-dark);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px;">M-Pesa Received</div>
+        <div class="split-receipt-amount" id="sr-amount">KES 0</div>
+        <div class="split-receipt-from" id="sr-from">Auto-split applied</div>
+      </div>
+      <div id="sr-splits"></div>
+      <div id="sr-surplus" style="display:none;" class="split-surplus-row">
+        <div style="font-size:18px;">💰</div>
+        <div style="flex:1;"><div style="font-size:12px;font-weight:800;color:var(--forest);">Surplus</div><div style="font-size:11px;color:var(--text-2);">Above your target</div></div>
+        <div style="font-size:14px;font-weight:800;color:var(--forest);" id="sr-surplus-amt">KES 0</div>
+      </div>
+      <button class="btn-primary" style="margin-top:18px;" onclick="closeSplitReceipt()">Done</button>
+    </div>
+  </div>
+
+  <!-- ══ Payment initiation modal ══ -->
+  <div class="pay-modal-backdrop" id="pay-modal" onclick="closePayModal(event)">
+    <div class="pay-sheet" id="pay-sheet">
+      <div class="pay-sheet-handle"></div>
+      <div class="pay-sheet-header">
+        <div class="pay-sheet-title" id="pm-eyebrow">Pay from category</div>
+        <div class="pay-sheet-cat-row" style="margin-top:8px;">
+          <div class="pay-sheet-cat-icon" id="pm-cat-icon">🏠</div>
+          <div>
+            <div class="pay-sheet-cat-name" id="pm-cat-name">Category</div>
+            <div class="pay-sheet-cat-bal">Available: <span id="pm-cat-bal">KES 0</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="pay-sheet-body">
+        <!-- Big amount -->
+        <div class="pay-big-amount-wrap" id="pm-amt-wrap">
+          <div class="pay-currency-label">AMOUNT (KES)</div>
+          <input class="pay-amount-input" type="number" min="1" inputmode="numeric"
+            id="pm-amount" placeholder="0"
+            oninput="onPayAmountInput()"
+            onblur="validatePayAmount()"/>
+          <div class="pay-balance-hint" id="pm-balance-hint">Available in category</div>
+        </div>
+        <!-- Quick amounts -->
+        <div class="pay-quick-row" id="pm-quick-row"></div>
+        <!-- Payment method -->
+        <div class="pay-field-label">Pay via</div>
+        <div class="pay-method-grid" id="pm-method-grid">
+          <div class="pay-method-card selected" onclick="selectPayMethod(this,'mpesa','📱','M-Pesa','Safaricom')">
+            <div class="pm-icon">📱</div>
+            <div class="pm-name">M-Pesa</div>
+            <div class="pm-type">Safaricom</div>
+          </div>
+          <div class="pay-method-card" onclick="selectPayMethod(this,'equity','🏦','Equity','EazzyPay')">
+            <div class="pm-icon">🏦</div>
+            <div class="pm-name">Equity</div>
+            <div class="pm-type">EazzyPay</div>
+          </div>
+          <div class="pay-method-card" onclick="selectPayMethod(this,'kcb','💳','KCB','KCB App')">
+            <div class="pm-icon">💳</div>
+            <div class="pm-name">KCB</div>
+            <div class="pm-type">KCB App</div>
+          </div>
+          <div class="pay-method-card" onclick="selectPayMethod(this,'coop','🟢','Co-op','MCo-opCash')">
+            <div class="pm-icon">🟢</div>
+            <div class="pm-name">Co-op</div>
+            <div class="pm-type">MCo-opCash</div>
+          </div>
+        </div>
+        <!-- Recipient -->
+        <div class="pay-field-group">
+          <label class="pay-field-label" id="pm-recipient-label">Recipient phone / Till / Paybill</label>
+          <input class="pay-field-input" type="tel" id="pm-recipient"
+            placeholder="e.g. 0712 345 678 or Till 522522"
+            oninput="clearPayFieldError('pm-recipient')"
+            onblur="validatePayRecipient()"/>
+          <div class="pay-field-error" id="pm-recipient-err">Please enter a valid recipient</div>
+        </div>
+        <!-- Recipient name / reference -->
+        <div class="pay-field-group">
+          <label class="pay-field-label">Recipient name (optional)</label>
+          <input class="pay-field-input" type="text" id="pm-recipient-name" placeholder="e.g. Java House, Equity Rent"/>
+        </div>
+        <!-- Memo -->
+        <div class="pay-memo-wrap">
+          <label class="pay-field-label">Memo (optional)</label>
+          <input class="pay-field-input" type="text" id="pm-memo" placeholder="e.g. March rent, Groceries"/>
+        </div>
+        <!-- Confirm -->
+        <button class="pay-confirm-btn" id="pm-confirm-btn" onclick="confirmPayment()">
+          <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><path d="M2 8h10M8 4l4 4-4 4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span id="pm-confirm-label">Pay via M-Pesa</span>
+        </button>
+        <div id="pm-error-msg" style="display:none;text-align:center;font-size:12px;font-weight:700;color:var(--red);margin-top:10px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ Redirect overlay ══ -->
+  <div class="redirect-overlay" id="redirect-overlay">
+    <div id="ro-opening-state">
+      <div class="redirect-app-icon" id="ro-icon">📱</div>
+      <div class="redirect-title" id="ro-title">Opening M-Pesa…</div>
+      <div class="redirect-sub" id="ro-sub">You'll be returned to Wallex automatically after your payment. The amount will be deducted from your category.</div>
+      <div class="redirect-spinner"></div>
+      <div class="redirect-cancel" onclick="cancelRedirect()">← Cancel and return</div>
+    </div>
+    <div id="ro-confirm-state" style="display:none;">
+      <div class="redirect-confirm-icon">❓</div>
+      <div class="redirect-title" style="font-size:19px;">Did the payment go through?</div>
+      <div class="redirect-confirm-amt" id="ro-confirm-amt">Paying <b>KES 0</b> to recipient</div>
+      <input class="redirect-code-input" id="ro-confirm-code" type="text" placeholder="M-Pesa code (optional), e.g. QGH7XXXX1" maxlength="12"/>
+      <button class="redirect-yes-btn" onclick="finalizePendingPayment(true)">
+        <svg width="15" height="15" fill="none" viewBox="0 0 15 15"><path d="M2 8l4 4 7-8" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Yes, it went through
+      </button>
+      <div class="redirect-no-btn" onclick="finalizePendingPayment(false)">It didn't go through — cancel payment</div>
+      <div class="redirect-pending-note">We can't read your payment app's confirmation directly, so we ask here. Funds stay reserved from this category until you confirm.</div>
+    </div>
+  </div>
+
+    <!-- TAB: Home -->
+    <div id="tab-home" class="tab-panel tab-active">
+      <div class="dash-header">
+        <div class="dash-bg-circle"></div>
+        <div class="status-bar light" style="position:relative;padding:0 0 14px;height:auto;"><span class="s-time">9:41</span></div>
+        <div class="dash-greeting">Good morning 👋</div>
+        <div class="dash-name" id="dash-user-name">Amina Ochieng</div>
+        <div class="dash-date">Thursday, 27 March · Freelancer Wallet</div>
+        <div class="dash-income-chip"><div class="dic-label">Total received</div><div class="dic-val" id="dash-income-val">KES 0</div></div>
+        <div class="dash-score-row">
+          <div class="score-pill">
+            <div class="score-pill-label">Target Progress</div>
+            <div class="score-pill-val" id="dash-target-pct">0%</div>
+            <div class="score-pill-bar"><div class="score-pill-fill" id="dash-target-bar" style="width:0%"></div></div>
+          </div>
+          <div class="score-pill">
+            <div class="score-pill-label">Surplus</div>
+            <div class="score-pill-val" id="dash-surplus-val">KES 0</div>
+            <div class="score-pill-bar"><div class="score-pill-fill" id="dash-surplus-bar" style="width:0%;background:var(--lime)"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Receive M-Pesa FAB -->
+      <div id="receive-fab" onclick="openReceiveModal()"
+        style="position:absolute;top:218px;left:50%;transform:translateX(-50%);z-index:30;
+               background:var(--lime);color:white;
+               padding:11px 22px;border-radius:24px;
+               display:flex;align-items:center;gap:8px;
+               font-size:13px;font-weight:800;
+               box-shadow:0 6px 20px rgba(52,168,90,0.45);
+               cursor:pointer;white-space:nowrap;transition:transform 0.15s;">
+        <svg width="16" height="16" fill="none" viewBox="0 0 16 16"><path d="M8 14V2M2 8l6-6 6 6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Receive M-Pesa
+      </div>
+
+      <div class="dash-scroll" style="padding-top:4px;">
+        <div class="dash-section-label">Category Targets</div>
+        <div id="home-cat-cards">
+          <!-- rendered by JS -->
+        </div>
+        <!-- Surplus card -->
+        <div class="savings-card" id="surplus-card" style="display:none;">
+          <div class="sc-header">
+            <div class="sc-icon">💰</div>
+            <div><div class="sc-title">Surplus</div><div class="sc-sub">Above target — allocate when ready</div></div>
+            <div class="sc-badge">EXTRA</div>
+          </div>
+          <div class="sc-body">
+            <div style="font-size:11px;color:rgba(255,255,255,0.6);font-weight:700;margin-bottom:4px;">ACCUMULATED SURPLUS</div>
+            <div class="sc-amount" id="surplus-amount">KES 0</div>
+            <div style="font-size:12px;color:rgba(255,255,255,0.5);">From payments above your total target</div>
+            <div class="sc-progress-bg"><div class="sc-progress-fill" id="surplus-fill" style="width:0%;"></div></div>
+          </div>
+        </div>
+
+        <!-- empty state before any payment -->
+        <div id="home-empty-state" style="display:none;">
+          <div class="empty-state" style="padding:20px 24px 32px;">
+            <div class="empty-icon">📲</div>
+            <div class="empty-title">Waiting for M-Pesa</div>
+            <div class="empty-sub">Your auto-split rule is live. Tap <strong>Receive M-Pesa</strong> above to simulate an incoming payment and watch it split instantly.</div>
+          </div>
+        </div>
+
+        <div style="background:linear-gradient(135deg,var(--lime-light),#D6F0C2);border-radius:16px;padding:16px;margin-bottom:12px;border:1.5px solid var(--lime);display:flex;align-items:center;gap:12px;cursor:pointer;" onclick="switchTab('rewards')">
+          <div style="font-size:28px;">🏆</div>
+          <div style="flex:1;"><div style="font-size:13px;font-weight:800;color:var(--forest-dark);">Wallex Rewards</div><div style="font-size:11px;color:var(--forest);line-height:1.4;margin-top:2px;">Save 10 more days to unlock your next reward!</div></div>
+          <div style="background:var(--forest);color:white;font-size:11px;font-weight:800;padding:6px 12px;border-radius:8px;white-space:nowrap;">View →</div>
+        </div>
+        <div class="feed-section-label" id="activity-label" style="display:none;">Recent Payments</div>
+        <div id="activity-feed"></div>
+      </div>
+    </div>
+
+    <!-- TAB: Budgets (Payment Schedule) -->
+    <div id="tab-budgets" class="tab-panel">
+      <div style="background:linear-gradient(150deg,var(--forest-dark),var(--forest));padding:52px 24px 24px;flex-shrink:0;position:relative;overflow:hidden;">
+        <div style="position:absolute;top:-40px;right:-40px;width:160px;height:160px;border-radius:50%;border:1.5px solid rgba(74,207,112,0.2);"></div>
+        <div style="font-size:11px;font-weight:800;color:rgba(255,255,255,0.5);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px;">March 2025</div>
+        <div style="font-family:'Poppins',sans-serif;font-size:22px;font-weight:800;color:white;margin-bottom:2px;">Payment Schedule</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:14px;">Auto-deductions from M-Pesa wallet</div>
+        <div style="display:flex;gap:10px;">
+          <div style="flex:1;background:rgba(255,255,255,0.1);border-radius:10px;padding:10px 12px;">
+            <div style="font-size:10px;color:rgba(255,255,255,0.5);font-weight:700;text-transform:uppercase;letter-spacing:.06em;">Total Bills</div>
+            <div style="font-family:'Poppins',sans-serif;font-size:18px;color:white;font-weight:800;margin-top:3px;">KES 65,699</div>
+          </div>
+          <div style="flex:1;background:rgba(255,255,255,0.1);border-radius:10px;padding:10px 12px;">
+            <div style="font-size:10px;color:rgba(255,255,255,0.5);font-weight:700;text-transform:uppercase;letter-spacing:.06em;">Paid So Far</div>
+            <div style="font-family:'Poppins',sans-serif;font-size:18px;color:var(--lime);font-weight:800;margin-top:3px;">KES 30,500</div>
+          </div>
+        </div>
+      </div>
+      <div style="background:var(--white);padding:14px 24px;border-bottom:1px solid var(--border);flex-shrink:0;">
+        <div style="font-size:11px;font-weight:800;color:var(--text-3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;">March — tap a day</div>
+        <div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;" id="cal-strip"></div>
+      </div>
+      <div style="flex:1;overflow-y:auto;padding:14px 24px 90px;" id="schedule-list"></div>
+    </div>
+
+    <!-- TAB: History -->
+    <div id="tab-history" class="tab-panel">
+      <div style="background:linear-gradient(150deg,var(--forest-dark),var(--forest));padding:52px 24px 24px;flex-shrink:0;">
+        <div style="font-size:11px;font-weight:800;color:rgba(255,255,255,0.5);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px;">M-Pesa Activity</div>
+        <div style="font-family:'Poppins',sans-serif;font-size:22px;font-weight:800;color:white;margin-bottom:2px;">Receipts & Splits</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:12px;">Every payment received and how it was split</div>
+        <div style="display:flex;gap:8px;overflow-x:auto;">
+          <div class="hist-filter active-hf" onclick="filterHistory('all',this)">All</div>
+          <div class="hist-filter" onclick="filterHistory('receipts',this)">📲 Received</div>
+          <div class="hist-filter" onclick="filterHistory('payments',this)">💸 Payments</div>
+          <div class="hist-filter" onclick="filterHistory('surplus',this)">💰 Surplus</div>
+        </div>
+      </div>
+      <div style="flex:1;overflow-y:auto;padding:14px 24px 90px;" id="history-list"></div>
+    </div>
+
+    <!-- TAB: Rewards -->
+    <div id="tab-rewards" class="tab-panel">
+      <div style="background:linear-gradient(150deg,var(--forest-dark),var(--forest));padding:52px 24px 24px;flex-shrink:0;">
+        <div style="font-size:11px;font-weight:800;color:rgba(255,255,255,0.5);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px;">Wallex Rewards</div>
+        <div style="font-family:'Poppins',sans-serif;font-size:22px;font-weight:800;color:white;margin-bottom:2px;">Your Points</div>
+        <div style="display:flex;align-items:baseline;gap:6px;margin:10px 0 4px;"><div style="font-family:'Poppins',sans-serif;font-size:40px;font-weight:800;color:var(--lime);">1,240</div><div style="font-size:14px;color:rgba(255,255,255,0.5);font-weight:700;">pts</div></div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:10px;">260 pts to next tier</div>
+        <div style="height:5px;background:rgba(255,255,255,0.15);border-radius:3px;overflow:hidden;"><div style="width:82%;height:100%;background:var(--lime);border-radius:3px;"></div></div>
+      </div>
+      <div style="flex:1;overflow-y:auto;padding:14px 24px 90px;">
+        <div class="dash-section-label">Partner Rewards</div>
+        <div id="rewards-list"></div>
+        <div class="dash-section-label" style="margin-top:8px;">Your Achievements</div>
+        <div id="achievements-list"></div>
+      </div>
+    </div>
+
+    <!-- TAB: Profile -->
+    <div id="tab-profile" class="tab-panel">
+      <div style="background:linear-gradient(150deg,var(--forest-dark),var(--forest));padding:52px 24px 32px;flex-shrink:0;text-align:center;">
+        <div style="width:72px;height:72px;border-radius:50%;background:var(--lime);display:flex;align-items:center;justify-content:center;font-family:'Poppins',sans-serif;font-size:26px;font-weight:800;color:var(--forest-dark);margin:0 auto 12px;border:3px solid rgba(255,255,255,0.3);">AO</div>
+        <div style="font-family:'Poppins',sans-serif;font-size:20px;font-weight:800;color:white;">Amina Ochieng</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-top:3px;">@amina.ochieng · Member since Jan 2025</div>
+        <div style="display:flex;justify-content:center;gap:20px;margin-top:16px;">
+          <div style="text-align:center;"><div style="font-family:'Poppins',sans-serif;font-size:18px;font-weight:800;color:white;">72</div><div style="font-size:10px;color:rgba(255,255,255,0.5);font-weight:700;text-transform:uppercase;letter-spacing:.06em;">Wallex Score</div></div>
+          <div style="width:1px;background:rgba(255,255,255,0.15);"></div>
+          <div style="text-align:center;"><div style="font-family:'Poppins',sans-serif;font-size:18px;font-weight:800;color:white;">12</div><div style="font-size:10px;color:rgba(255,255,255,0.5);font-weight:700;text-transform:uppercase;letter-spacing:.06em;">Days Active</div></div>
+          <div style="width:1px;background:rgba(255,255,255,0.15);"></div>
+          <div style="text-align:center;"><div style="font-family:'Poppins',sans-serif;font-size:18px;font-weight:800;color:white;">1,240</div><div style="font-size:10px;color:rgba(255,255,255,0.5);font-weight:700;text-transform:uppercase;letter-spacing:.06em;">Points</div></div>
+        </div>
+      </div>
+      <div style="flex:1;overflow-y:auto;padding:16px 24px 90px;">
+        <div class="dash-section-label">Account</div>
+        <div id="profile-menu"></div>
+        <div class="dash-section-label" style="margin-top:8px;">Appearance</div>
+        <div class="notif-row">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span id="dark-mode-icon" style="font-size:16px;">☀️</span>
+            <div><div class="notif-label">Dark Mode</div><div class="notif-sub" id="dark-mode-sub">Easier on the eyes at night</div></div>
+          </div>
+          <div class="toggle off" id="dark-toggle" onclick="toggleDarkMode()"></div>
+        </div>
+        <div class="dash-section-label" style="margin-top:8px;">Notifications</div>
+        <div id="notif-toggles"></div>
+        <button class="btn-signout" onclick="openSignOutConfirm()">Sign Out</button>
+      </div>
+    </div>
+
+    <!-- Sign Out confirmation sheet -->
+    <div class="modal-backdrop" id="signout-modal" onclick="closeSignOutConfirm(event)">
+      <div class="modal-sheet" onclick="event.stopPropagation()" style="padding:0 24px 28px;">
+        <div class="modal-handle"></div>
+        <div style="width:56px;height:56px;border-radius:50%;background:var(--red-light);display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:14px;">🔒</div>
+        <div class="modal-sheet-title">Sign out of Wallex?</div>
+        <div class="modal-sheet-sub">You'll need to sign in again to access your budgets, split rules, and payment history.</div>
+        <button class="btn-signout-confirm" onclick="confirmSignOut()">Yes, sign me out</button>
+        <button class="btn-ghost" style="margin-top:10px;" onclick="closeSignOutConfirm()">Cancel</button>
+      </div>
+    </div>
+
+    <!-- Shared Bottom Nav -->
+    <div class="bottom-nav">
+      <div class="nav-btn active" id="nav-home" onclick="switchTab('home')">
+        <svg fill="none" viewBox="0 0 22 22"><rect x="2" y="2" width="8" height="8" rx="2" stroke="currentColor" stroke-width="1.8"/><rect x="12" y="2" width="8" height="8" rx="2" stroke="currentColor" stroke-width="1.8"/><rect x="2" y="12" width="8" height="8" rx="2" stroke="currentColor" stroke-width="1.8"/><rect x="12" y="12" width="8" height="8" rx="2" stroke="currentColor" stroke-width="1.8"/></svg>
+        Home<div class="nav-indicator"></div>
+      </div>
+      <div class="nav-btn" id="nav-budgets" onclick="switchTab('budgets')">
+        <svg fill="none" viewBox="0 0 22 22"><rect x="3" y="4" width="16" height="14" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M3 8h16M7 12h2M7 15h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        Budgets
+      </div>
+      <div class="nav-btn" id="nav-history" onclick="switchTab('history')">
+        <svg fill="none" viewBox="0 0 22 22"><circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="1.8"/><path d="M11 7v4l3 2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        History
+      </div>
+      <div class="nav-btn" id="nav-rewards" onclick="switchTab('rewards')">
+        <svg fill="none" viewBox="0 0 22 22"><path d="M11 4l2 4h5l-4 3 1.5 5L11 13.5 6.5 16 8 11 4 8h5z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+        Rewards
+      </div>
+      <div class="nav-btn" id="nav-profile" onclick="switchTab('profile')">
+        <svg fill="none" viewBox="0 0 22 22"><circle cx="11" cy="8" r="3.5" stroke="currentColor" stroke-width="1.8"/><path d="M4 19c0-3 3.134-5.5 7-5.5s7 2.5 7 5.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        Profile
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Progress dots -->
+<div id="dots"></div>
+
+<style>
+.tab-panel{display:none;flex-direction:column;position:absolute;inset:0;overflow:hidden;}
+.tab-panel.tab-active{display:flex;}
+.hist-filter{padding:6px 14px;border-radius:20px;font-size:11px;font-weight:700;background:rgba(255,255,255,0.12);color:rgba(255,255,255,0.6);cursor:pointer;white-space:nowrap;transition:all 0.2s;}
+.hist-filter.active-hf{background:var(--lime);color:var(--forest-dark);}
+.day-chip{display:flex;flex-direction:column;align-items:center;min-width:44px;padding:8px 6px;border-radius:12px;cursor:pointer;flex-shrink:0;transition:all 0.2s;border:1.5px solid transparent;}
+.day-chip.today{background:var(--forest);border-color:var(--forest);}
+.day-chip.has-payment{border-color:var(--lime);}
+.day-chip.selected{background:var(--forest-light);border-color:var(--forest);}
+.day-chip .dw{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--text-3);margin-bottom:3px;}
+.day-chip .dd{font-size:15px;font-weight:800;color:var(--text);}
+.day-chip.today .dw,.day-chip.today .dd{color:white;}
+.day-chip .dpip{width:5px;height:5px;border-radius:50%;background:var(--lime);margin-top:4px;}
+.sched-item{background:var(--white);border-radius:14px;padding:14px 16px;margin-bottom:10px;border:1.5px solid var(--border);box-shadow:var(--shadow-card);}
+.sched-item.paid{opacity:0.6;}
+.sched-item-row{display:flex;align-items:center;gap:12px;}
+.sched-icon{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.sched-name{font-size:14px;font-weight:700;color:var(--text);}
+.sched-meta{font-size:11px;color:var(--text-3);font-weight:600;margin-top:2px;}
+.sched-badge{font-size:10px;font-weight:800;padding:3px 9px;border-radius:20px;margin-top:6px;display:inline-block;}
+.sched-amount{font-family:'Poppins',sans-serif;font-size:17px;font-weight:700;color:var(--text);}
+.hist-item{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--border);}
+.hist-item:last-child{border-bottom:none;}
+.hist-icon{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.hist-name{font-size:13px;font-weight:700;color:var(--text);}
+.hist-cat{font-size:11px;color:var(--text-3);font-weight:600;margin-top:2px;}
+.reward-card{background:var(--white);border-radius:14px;padding:14px 16px;margin-bottom:10px;border:1.5px solid var(--border);display:flex;align-items:center;gap:12px;box-shadow:var(--shadow-card);cursor:pointer;}
+.reward-logo{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.reward-name{font-size:13px;font-weight:800;color:var(--text);}
+.reward-desc{font-size:11px;color:var(--text-2);margin-top:2px;line-height:1.4;}
+.reward-pts{font-size:12px;font-weight:800;color:var(--forest);background:var(--forest-light);padding:4px 10px;border-radius:20px;white-space:nowrap;margin-left:auto;}
+.reward-pts.locked{color:var(--text-3);background:var(--border);}
+.achieve-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);}
+.achieve-item:last-child{border-bottom:none;}
+.achieve-icon{font-size:22px;width:42px;height:42px;border-radius:12px;background:var(--lime-light);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.achieve-name{font-size:13px;font-weight:700;color:var(--text);}
+.achieve-sub{font-size:11px;color:var(--text-3);font-weight:600;margin-top:2px;}
+.achieve-pts{margin-left:auto;font-size:13px;font-weight:800;color:var(--lime-dark);}
+.pmenu-item{display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--white);border-radius:12px;margin-bottom:8px;border:1.5px solid var(--border);cursor:pointer;}
+.pmenu-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.pmenu-label{font-size:13px;font-weight:700;color:var(--text);flex:1;}
+.pmenu-val{font-size:12px;color:var(--text-3);font-weight:600;}
+.notif-row{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;background:var(--white);border-radius:12px;margin-bottom:8px;border:1.5px solid var(--border);}
+.notif-label{font-size:13px;font-weight:700;color:var(--text);}
+.notif-sub{font-size:11px;color:var(--text-3);margin-top:2px;}
+.toggle{width:42px;height:24px;border-radius:12px;background:var(--forest);position:relative;cursor:pointer;flex-shrink:0;transition:background 0.2s;}
+.toggle.off{background:var(--border);}
+.toggle::after{content:'';position:absolute;top:3px;width:18px;height:18px;border-radius:50%;background:white;transition:left 0.2s;left:21px;}
+.toggle.off::after{left:3px;}
+</style>
+
+
+<style>
+/* ── Alloc: % input repurpose ── */
+.alloc-pct-suffix{font-size:18px;font-weight:900;color:var(--forest);flex-shrink:0;padding-left:4px;}
+.alloc-bar-wrap{height:4px;background:var(--border);border-radius:2px;margin-top:8px;overflow:hidden;}
+.alloc-bar-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--forest),var(--lime));transition:width 0.3s ease;}
+
+.alloc-row-divider{height:1px;background:var(--border);margin:10px 0;}
+.alloc-target-row{
+  display:flex;align-items:center;gap:8px;
+  background:var(--cream);border:1.5px solid var(--border);
+  border-radius:10px;padding:9px 12px;
+}
+.alloc-target-label{font-size:11px;font-weight:800;color:var(--text-3);flex-shrink:0;letter-spacing:0.04em;}
+.alloc-target-input{
+  flex:1;min-width:0;border:none;background:transparent;outline:none;
+  font-size:14px;font-weight:700;color:var(--text);
+  font-family:'Poppins',sans-serif;text-align:right;
+}
+.alloc-target-input::-webkit-outer-spin-button,
+.alloc-target-input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
+.alloc-target-input{-moz-appearance:textfield;}
+.alloc-target-input::placeholder{color:var(--text-3);font-weight:600;}
+.alloc-target-suffix{font-size:11px;font-weight:800;color:var(--text-3);flex-shrink:0;}
+.surplus-auto-row{
+  background:linear-gradient(135deg,var(--forest-light),#D6F0C2);
+  border:1.5px dashed var(--lime-dark);border-radius:14px;
+  padding:12px 16px;margin-bottom:10px;
+  display:flex;align-items:center;gap:12px;
+}
+.surplus-auto-pct{font-family:'Poppins',sans-serif;font-size:22px;font-weight:800;color:var(--forest);}
+
+/* ── Activity feed ── */
+.feed-section-label{
+  font-size:11px;font-weight:800;color:var(--text-3);
+  text-transform:uppercase;letter-spacing:.08em;
+  margin:20px 0 10px;
+}
+.feed-card{
+  background:var(--white);border-radius:16px;
+  border:1.5px solid var(--border);
+  box-shadow:var(--shadow-card);
+  margin-bottom:12px;overflow:hidden;
+}
+.feed-card-header{
+  display:flex;align-items:center;gap:12px;
+  padding:14px 16px;cursor:pointer;
+}
+.feed-mpesa-icon{
+  width:40px;height:40px;border-radius:11px;
+  background:linear-gradient(135deg,var(--forest),var(--lime));
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;flex-shrink:0;
+}
+.feed-amount{font-family:'Poppins',sans-serif;font-size:18px;font-weight:800;color:var(--forest);}
+.feed-sender{font-size:11px;color:var(--text-3);font-weight:600;margin-top:2px;}
+.feed-time{font-size:11px;color:var(--text-3);font-weight:600;margin-left:auto;text-align:right;}
+.feed-splits-body{
+  border-top:1px solid var(--border);
+  padding:10px 16px 14px;
+  display:none;
+}
+.feed-splits-body.open{display:block;}
+.feed-split-line{
+  display:flex;align-items:center;gap:8px;padding:6px 0;
+  border-bottom:1px solid var(--border);
+}
+.feed-split-line:last-child{border-bottom:none;}
+.fsl-icon{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+.fsl-name{font-size:12px;font-weight:700;color:var(--text);flex:1;}
+.fsl-pct{font-size:10px;font-weight:700;color:var(--text-3);}
+.fsl-amt{font-size:13px;font-weight:800;color:var(--forest);}
+.feed-surplus-line{
+  display:flex;align-items:center;gap:8px;padding:8px 10px;
+  background:var(--forest-light);border-radius:8px;margin-top:6px;
+}
+.feed-chevron{
+  width:20px;height:20px;display:flex;align-items:center;justify-content:center;
+  color:var(--text-3);transition:transform 0.2s;flex-shrink:0;
+}
+.feed-chevron.open{transform:rotate(180deg);}
+
+/* ── Category accumulator cards ── */
+.cat-acc-card{
+  background:var(--white);border-radius:16px;padding:16px;
+  margin-bottom:12px;border:1.5px solid var(--border);
+  box-shadow:var(--shadow-card);
+}
+.cac-header{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.cac-icon{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.cac-name{font-size:14px;font-weight:700;color:var(--text);}
+.cac-pct{font-size:11px;color:var(--text-3);font-weight:600;margin-top:2px;}
+.cac-amount{font-family:'Poppins',sans-serif;font-size:22px;font-weight:800;color:var(--text);}
+.cac-sub{font-size:11px;color:var(--text-3);margin-top:2px;}
+.cac-bar{height:5px;background:var(--border);border-radius:3px;margin-top:10px;overflow:hidden;}
+.cac-fill{height:100%;border-radius:3px;transition:width 0.6s ease;}
+
+/* Pay button on card */
+.cac-footer{display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:10px;border-top:1px solid var(--border);}
+.cac-pay-btn{
+  display:flex;align-items:center;gap:6px;
+  padding:8px 16px;border-radius:10px;
+  background:var(--forest);color:white;
+  font-size:12px;font-weight:800;border:none;
+  cursor:pointer;font-family:'Poppins',sans-serif;
+  transition:all 0.15s;letter-spacing:0.02em;
+}
+.cac-pay-btn:hover{background:var(--forest-dark);}
+.cac-pay-btn:active{transform:scale(0.96);}
+.cac-pay-btn:disabled{background:var(--border);color:var(--text-3);cursor:not-allowed;}
+.cac-balance-chip{
+  font-size:11px;font-weight:700;color:var(--text-3);
+  background:var(--cream);border:1px solid var(--border);
+  padding:5px 10px;border-radius:20px;
+}
+
+/* ── Payment Modal ── */
+.pay-modal-backdrop{
+  position:absolute;inset:0;z-index:160;
+  background:rgba(2,12,20,0.55);backdrop-filter:blur(4px);
+  display:flex;flex-direction:column;justify-content:flex-end;
+  opacity:0;pointer-events:none;transition:opacity 0.28s ease;
+}
+.pay-modal-backdrop.open{opacity:1;pointer-events:all;}
+.pay-sheet{
+  background:var(--white);border-radius:24px 24px 0 0;
+  padding:0 0 32px;max-height:88%;overflow-y:auto;
+  transform:translateY(100%);transition:transform 0.32s cubic-bezier(0.34,1.05,0.64,1);
+}
+.pay-modal-backdrop.open .pay-sheet{transform:none;}
+.pay-sheet-handle{width:36px;height:4px;border-radius:2px;background:var(--border);margin:14px auto 0;}
+.pay-sheet-header{padding:18px 22px 14px;border-bottom:1px solid var(--border);}
+.pay-sheet-cat-row{display:flex;align-items:center;gap:10px;margin-bottom:4px;}
+.pay-sheet-cat-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
+.pay-sheet-cat-name{font-size:15px;font-weight:800;color:var(--text);}
+.pay-sheet-cat-bal{font-size:12px;color:var(--text-3);font-weight:600;}
+.pay-sheet-title{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--lime-dark);}
+
+.pay-sheet-body{padding:18px 22px;}
+
+/* Big amount input */
+.pay-big-amount-wrap{
+  text-align:center;padding:20px 16px;
+  background:var(--cream);border-radius:14px;
+  border:2px solid var(--border);margin-bottom:16px;
+  transition:border-color 0.2s;
+}
+.pay-big-amount-wrap:focus-within{border-color:var(--forest);}
+.pay-big-amount-wrap.error-glow{border-color:var(--red);background:#fff8f8;animation:shake 0.35s ease;}
+.pay-currency-label{font-size:13px;font-weight:800;color:var(--text-3);letter-spacing:.08em;margin-bottom:6px;}
+.pay-amount-input{
+  width:100%;border:none;background:transparent;outline:none;
+  font-family:'Poppins',sans-serif;font-size:36px;font-weight:800;
+  color:var(--text);text-align:center;
+}
+.pay-amount-input::-webkit-outer-spin-button,
+.pay-amount-input::-webkit-inner-spin-button{-webkit-appearance:none;}
+.pay-amount-input{-moz-appearance:textfield;}
+.pay-amount-input::placeholder{color:var(--border);}
+.pay-balance-hint{font-size:11px;font-weight:700;color:var(--text-3);margin-top:6px;}
+.pay-balance-hint.warn{color:var(--gold);}
+.pay-balance-hint.danger{color:var(--red);}
+
+/* Quick amounts */
+.pay-quick-row{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap;}
+.pay-quick-chip{
+  flex:1;min-width:60px;padding:8px 4px;border-radius:8px;text-align:center;
+  font-size:12px;font-weight:800;color:var(--forest);
+  background:var(--forest-light);border:1px solid var(--border-mid);
+  cursor:pointer;transition:all 0.15s;
+}
+.pay-quick-chip:hover{background:var(--forest);color:white;}
+.pay-quick-chip:active{transform:scale(0.95);}
+
+/* Fields */
+.pay-field-group{margin-bottom:14px;}
+.pay-field-label{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--text-2);margin-bottom:6px;display:block;}
+.pay-field-input{
+  width:100%;padding:12px 14px;border:1.5px solid var(--border);
+  border-radius:10px;font-size:14px;font-weight:600;
+  font-family:'Poppins',sans-serif;color:var(--text);background:var(--white);
+  outline:none;transition:border-color 0.2s,box-shadow 0.2s;
+}
+.pay-field-input:focus{border-color:var(--forest);box-shadow:0 0 0 3px rgba(20,104,129,0.1);}
+.pay-field-input.error{border-color:var(--red);background:#fff8f8;}
+.pay-field-error{font-size:11px;font-weight:700;color:var(--red);margin-top:4px;display:none;}
+
+/* Payment method selector */
+.pay-method-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;}
+.pay-method-card{
+  border:1.5px solid var(--border);border-radius:12px;
+  padding:12px;cursor:pointer;transition:all 0.15s;
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+}
+.pay-method-card:hover{border-color:var(--forest);background:var(--forest-light);}
+.pay-method-card.selected{border-color:var(--forest);background:var(--forest-light);}
+.pay-method-card.selected .pm-name{color:var(--forest);}
+.pm-icon{font-size:22px;}
+.pm-name{font-size:12px;font-weight:800;color:var(--text);}
+.pm-type{font-size:10px;color:var(--text-3);font-weight:600;}
+
+/* Memo field */
+.pay-memo-wrap{margin-bottom:20px;}
+
+/* Confirm pay button */
+.pay-confirm-btn{
+  width:100%;padding:16px;border-radius:12px;border:none;
+  background:linear-gradient(135deg,var(--forest),var(--forest-mid));
+  color:white;font-size:15px;font-weight:800;
+  font-family:'Poppins',sans-serif;cursor:pointer;
+  box-shadow:0 6px 20px rgba(20,104,129,0.3);
+  transition:all 0.15s;display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.pay-confirm-btn:active{transform:scale(0.98);}
+.pay-confirm-btn:disabled{background:var(--border);color:var(--text-3);box-shadow:none;cursor:not-allowed;}
+
+/* ── Redirect overlay ── */
+.redirect-overlay{
+  position:absolute;inset:0;z-index:180;
+  background:var(--white);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:40px;
+  opacity:0;pointer-events:none;transition:opacity 0.25s;
+}
+.redirect-overlay.show{opacity:1;pointer-events:all;}
+.redirect-app-icon{
+  width:80px;height:80px;border-radius:20px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:40px;margin:0 auto 20px;
+  box-shadow:0 8px 24px rgba(0,0,0,0.15);
+  animation:pop 0.35s cubic-bezier(0.34,1.56,0.64,1);
+}
+.redirect-title{font-family:'Poppins',sans-serif;font-size:22px;font-weight:800;color:var(--text);margin-bottom:8px;}
+.redirect-sub{font-size:13px;color:var(--text-2);line-height:1.6;margin-bottom:28px;}
+.redirect-spinner{width:36px;height:36px;border-radius:50%;border:3px solid var(--border);border-top-color:var(--forest);animation:spin 0.9s linear infinite;margin:0 auto;}
+.redirect-cancel{
+  margin-top:20px;font-size:12px;font-weight:700;color:var(--text-3);
+  cursor:pointer;padding:8px 20px;border-radius:8px;
+  transition:all 0.15s;
+}
+.redirect-cancel:hover{background:var(--cream);color:var(--text);}
+
+/* ── Pay confirmation step (post-redirect) ── */
+.redirect-confirm-icon{
+  width:72px;height:72px;border-radius:50%;background:var(--gold-light);
+  display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 18px;
+  animation:pop 0.35s cubic-bezier(0.34,1.56,0.64,1);
+}
+.redirect-confirm-amt{font-family:'Poppins',sans-serif;font-size:15px;font-weight:800;color:var(--text);margin-bottom:22px;line-height:1.5;}
+.redirect-confirm-amt b{color:var(--forest);}
+.redirect-code-input{
+  width:100%;max-width:280px;padding:13px 16px;border-radius:12px;border:1.5px solid var(--border);
+  font-size:13px;font-weight:700;letter-spacing:.03em;text-align:center;color:var(--text);
+  margin-bottom:14px;outline:none;transition:border-color .15s;
+}
+.redirect-code-input:focus{border-color:var(--forest);}
+.redirect-code-input::placeholder{color:var(--text-3);font-weight:600;}
+.redirect-yes-btn{
+  width:100%;max-width:280px;padding:14px;border-radius:12px;border:none;
+  background:var(--forest);color:white;font-size:14px;font-weight:800;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.redirect-no-btn{
+  margin-top:12px;font-size:12.5px;font-weight:700;color:var(--red);
+  cursor:pointer;padding:8px 20px;border-radius:8px;transition:all .15s;
+}
+.redirect-no-btn:hover{background:var(--red-light);}
+.redirect-pending-note{font-size:11px;color:var(--text-3);margin-top:16px;line-height:1.6;max-width:280px;}
+
+/* ── Outgoing log item ── */
+.outgoing-badge{
+  display:inline-block;font-size:9px;font-weight:800;
+  padding:2px 7px;border-radius:20px;
+  background:var(--red-light);color:var(--red);
+  margin-left:6px;vertical-align:middle;letter-spacing:.04em;
+}
+.pending-badge{
+  display:inline-block;font-size:9px;font-weight:800;
+  padding:2px 7px;border-radius:20px;
+  background:var(--gold-light);color:var(--gold);
+  margin-left:6px;vertical-align:middle;letter-spacing:.04em;
+}
+.failed-badge{
+  display:inline-block;font-size:9px;font-weight:800;
+  padding:2px 7px;border-radius:20px;
+  background:var(--border);color:var(--text-3);
+  margin-left:6px;vertical-align:middle;letter-spacing:.04em;
+}
+.hist-item.is-pending{cursor:pointer;}
+.hist-item.is-pending:active{background:var(--cream);}
+
+/* ── M-Pesa notification banner ── */
+.mpesa-notif{
+  position:absolute;top:0;left:0;right:0;z-index:150;
+  background:linear-gradient(90deg,#4ACF70,#146881);
+  padding:14px 20px 14px;
+  display:flex;align-items:center;gap:12px;
+  transform:translateY(-100%);
+  transition:transform 0.4s cubic-bezier(0.34,1.1,0.64,1);
+  box-shadow:0 4px 20px rgba(0,0,0,0.2);
+}
+.mpesa-notif.show{transform:translateY(0);}
+.mpesa-notif-icon{font-size:24px;flex-shrink:0;}
+.mpesa-notif-title{font-size:13px;font-weight:800;color:white;}
+.mpesa-notif-sub{font-size:11px;color:rgba(255,255,255,0.75);margin-top:2px;}
+
+/* ── Splitting animation overlay ── */
+.split-animate-overlay{
+  position:absolute;inset:0;z-index:100;
+  background:rgba(20,104,129,0.08);backdrop-filter:blur(1px);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity 0.3s;
+}
+.split-animate-overlay.show{opacity:1;pointer-events:all;}
+.split-spinner{
+  width:60px;height:60px;border-radius:50%;
+  border:3px solid rgba(20,104,129,0.15);
+  border-top-color:var(--forest);
+  animation:spin 0.8s linear infinite;
+  margin-bottom:16px;
+}
+.split-animate-label{font-size:14px;font-weight:800;color:var(--forest);}
+.split-animate-sub{font-size:12px;color:var(--text-2);margin-top:6px;}
+
+/* ── Set Security PIN screen ── */
+.pin-icon-circle{width:72px;height:72px;border-radius:50%;background:var(--red-light);display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 20px;}
+.pin-dots-wrap{display:flex;gap:16px;justify-content:center;margin:22px 0 8px;}
+.pin-dot{width:16px;height:16px;border-radius:50%;border:2px solid var(--border-mid);background:transparent;transition:background .15s,border-color .15s;}
+.pin-dot.filled{background:var(--forest);border-color:var(--forest);}
+@keyframes pinShake{10%,90%{transform:translateX(-2px);}20%,80%{transform:translateX(4px);}30%,50%,70%{transform:translateX(-8px);}40%,60%{transform:translateX(8px);}}
+.pin-dots-wrap.shake{animation:pinShake 0.5s;}
+.pin-error{color:var(--red);font-size:12.5px;font-weight:700;margin-top:14px;min-height:17px;display:none;}
+.pin-keypad{display:grid;grid-template-columns:repeat(3,68px);gap:16px;justify-content:center;margin-top:20px;}
+.pin-key{width:68px;height:68px;border-radius:50%;background:var(--cream);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:var(--text);cursor:pointer;user-select:none;transition:background .15s;}
+.pin-key:active{background:var(--border);}
+.pin-key.empty{visibility:hidden;cursor:default;}
+.pin-key.backspace{font-size:19px;}
+.pin-keypad.locked{opacity:0.4;pointer-events:none;}
+.pin-bio-btn{margin-top:26px;display:flex;align-items:center;justify-content:center;gap:8px;color:var(--teal);font-weight:700;font-size:13px;cursor:pointer;}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+</style>
+
+<script>
+// ══════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════
+const SCREENS=['s-welcome','s-intro','s-signup','s-login','s-services','s-integ','s-alloc','s-review','s-loading','s-success','s-pin','s-dashboard'];
+let current='s-welcome';
+let activeTab='home';
+let addCatCounter=0;
+
+// Category targets — percentages (must total ≤ 100; remainder = surplus %)
+let cats=[
+  {name:'Rent & Housing', emoji:'🏠', bg:'#E4F3F3', pct:30, target:24000},
+  {name:'Food & Nutrition',emoji:'🍽️', bg:'#FBEEE0', pct:25, target:20000},
+  {name:'Transport',       emoji:'🚌', bg:'#FDEAEA', pct:15, target:12000},
+  {name:'Savings',         emoji:'💎', bg:'#E9FBF0', pct:20, target:16000},
+];
+// Running accumulated amounts per category (index-matched to cats)
+let catAccumulated=[];
+let surplusAccumulated=0;
+let totalReceived=0;
+
+// Incoming payment log
+let incomingLog=[];
+
+const iconPalette=['🎓','🎬','👕','🐾','💊','🎁','📱','🎨','✈️','🏋️','📚','🛒'];
+const bgPalette  =['#E5F1FE','#FDEAEA','#F0EBFE','#FBEEE0','#E4F3F3','#E9FBF0','#FCE7F3','#E0F7F0','#FFF4D6','#E8ECFB','#FDF0E5','#EAF0E0'];
+
+// Static data
+const scheduleItems=[
+  {name:'Equity Bank Rent',      emoji:'🏠',bg:'#E4F3F3',day:1, amount:24000,cat:'rent',    status:'paid',    recurring:'Monthly'},
+  {name:'Kenya Power Bill',      emoji:'💡',bg:'#FBEEE0',day:5, amount:3200, cat:'rent',    status:'paid',    recurring:'Monthly'},
+  {name:'Nairobi Water',         emoji:'💧',bg:'#E5F1FE',day:7, amount:1800, cat:'rent',    status:'paid',    recurring:'Monthly'},
+  {name:'Safaricom Postpaid',    emoji:'📱',bg:'#F0EBFE',day:10,amount:2500, cat:'transport',status:'paid',   recurring:'Monthly'},
+  {name:'DSTV Compact',          emoji:'📺',bg:'#FBEEE0',day:14,amount:2850, cat:'rent',    status:'paid',    recurring:'Monthly'},
+  {name:'Uber Pass',             emoji:'🚗',bg:'#FDEAEA',day:15,amount:999,  cat:'transport',status:'upcoming',recurring:'Monthly'},
+  {name:'Nairobi Bus SACCO',     emoji:'🚌',bg:'#FDEAEA',day:16,amount:4000, cat:'transport',status:'upcoming',recurring:'Monthly'},
+  {name:'Java House Meal Plan',  emoji:'☕',bg:'#FBEEE0',day:20,amount:8000, cat:'food',    status:'upcoming',recurring:'Monthly'},
+  {name:'Quickmart Groceries',   emoji:'🛒',bg:'#FBEEE0',day:22,amount:5500, cat:'food',    status:'upcoming',recurring:'Monthly'},
+  {name:'Wallex Life Ins.',  emoji:'🛡️',bg:'#E9FBF0',day:25,amount:4200, cat:'savings', status:'upcoming',recurring:'Monthly'},
+  {name:'NCBA Savings Auto',     emoji:'💎',bg:'#E9FBF0',day:27,amount:8000, cat:'savings', status:'upcoming',recurring:'Monthly'},
+  {name:'Gym Membership',        emoji:'🏋️',bg:'#F0EBFE',day:30,amount:3500, cat:'transport',status:'upcoming',recurring:'Monthly'},
+];
+const rewardsData=[
+  {logo:'☕',name:'Java House',       desc:'10% off any order — redeem in-store',  pts:500, bg:'#FBEEE0',unlocked:true},
+  {logo:'🛒',name:'Quickmart',        desc:'KES 200 voucher — valid all branches', pts:800, bg:'#E4F3F3',unlocked:true},
+  {logo:'🏋️',name:'Gym Membership',   desc:'1 month free at any partner gym',      pts:1500,bg:'#F0EBFE',unlocked:false},
+  {logo:'✈️',name:'Kenya Airways',    desc:'Frequent flyer miles upgrade',          pts:3000,bg:'#E5F1FE',unlocked:false},
+];
+const achievementsData=[
+  {icon:'🔥',name:'7-Day Streak',     sub:'Stayed within budget 7 days straight',  pts:'+50 pts', done:true},
+  {icon:'💰',name:'First Savings Goal',sub:'Saved KES 10,000 this month',          pts:'+100 pts',done:true},
+  {icon:'📊',name:'Budget Master',    sub:'Used all 4 spending categories',         pts:'+30 pts', done:true},
+  {icon:'🎯',name:'30-Day Champion',  sub:'Complete 30 days on track',              pts:'+200 pts',done:false},
+];
+const profileMenu=[
+  {icon:'💳',bg:'#E4F3F3',label:'M-Pesa Account',  val:'+254 712 345 678'},
+  {icon:'🏦',bg:'#F0EBFE',label:'Linked Bank',      val:'Equity Bank'},
+  {icon:'📊',bg:'#FBEEE0',label:'Split Rules',      val:'Edit split'},
+  {icon:'📅',bg:'#E5F1FE',label:'Payment Day',      val:'1st of month'},
+  {icon:'🔒',bg:'#FDEAEA',label:'Security & PIN',   val:''},
+  {icon:'❓',bg:'#E9FBF0',label:'Help & Support',   val:''},
+];
+const notifData=[
+  {label:'M-Pesa Auto-Split',   sub:'Split every incoming payment instantly',  on:true},
+  {label:'Surplus Alerts',      sub:'Notify when surplus exceeds target',       on:true},
+  {label:'Payment Reminders',   sub:'24hrs before scheduled payments',          on:true},
+  {label:'Wallex Tips',         sub:'Weekly financial wellness tips',           on:false},
+];
+
+// ══════════════════════════════════════════════
+//  HELPERS
+// ══════════════════════════════════════════════
+function escapeHtml(s){return(s==null?'':String(s)).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function totalPct(){return cats.reduce((s,c)=>s+(parseFloat(c.pct)||0),0);}
+function surplusPct(){return Math.max(0,100-totalPct());}
+function now(){const d=new Date();return d.toLocaleTimeString('en-KE',{hour:'2-digit',minute:'2-digit'});}
+function fmtKES(n){return'KES '+(Math.round(n)||0).toLocaleString();}
+
+// ══════════════════════════════════════════════
+//  TOAST
+// ══════════════════════════════════════════════
+let toastTimer=null;
+function showToast(msg,type='info',host='toast-host',duration=3000){
+  const icons={error:'⚠️',warning:'⏳',success:'✅',info:'ℹ️'};
+  const el=document.getElementById(host);if(!el)return;
+  clearTimeout(toastTimer);
+  el.innerHTML=`<div class="toast ${type}"><span class="toast-icon">${icons[type]||'ℹ️'}</span><span>${msg}</span></div>`;
+  toastTimer=setTimeout(()=>{const t=el.querySelector('.toast');if(t){t.style.transition='opacity 0.3s,transform 0.3s';t.style.opacity='0';t.style.transform='translateY(8px)';setTimeout(()=>el.innerHTML='',300);}},duration);
+}
+
+// ══════════════════════════════════════════════
+//  SIGN-UP VALIDATION
+// ══════════════════════════════════════════════
+function setFieldError(f,msg){const i=document.getElementById('inp-'+f);const e=document.getElementById('err-'+f);const o=document.getElementById('ok-'+f);if(!i)return false;i.classList.add('error');i.classList.remove('success-field');if(e){e.style.display='flex';const et=document.getElementById('err-'+f+'-text');if(et)et.textContent=msg;}if(o)o.style.display='none';return false;}
+function setFieldOk(f,showOk=false){const i=document.getElementById('inp-'+f);const e=document.getElementById('err-'+f);const o=document.getElementById('ok-'+f);if(!i)return;i.classList.remove('error');i.classList.add('success-field');if(e)e.style.display='none';if(o)o.style.display=showOk?'flex':'none';}
+function clearFieldState(f){const i=document.getElementById('inp-'+f);const e=document.getElementById('err-'+f);const o=document.getElementById('ok-'+f);if(i){i.classList.remove('error','success-field');}if(e)e.style.display='none';if(o)o.style.display='none';}
+function liveValidate(f){
+  const val=(document.getElementById('inp-'+f)||{}).value||'';
+  if(!val.trim()&&f!=='pw'&&f!=='pw2'){clearFieldState(f);return;}
+  switch(f){
+    case'name': if(val.trim().length<2)setFieldError('name','Name must be at least 2 characters');else if(!/^[a-zA-Z\s'\-]+$/.test(val.trim()))setFieldError('name','Letters only');else setFieldOk('name');break;
+    case'id':   if(!/^\d+$/.test(val.trim()))setFieldError('id','Digits only');else if(val.trim().length<7||val.trim().length>8)setFieldError('id','Enter a valid 7-8 digit ID');else setFieldOk('id');break;
+    case'email':{if(!val.trim()){clearFieldState('email');return;}if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val.trim()))setFieldError('email','Enter a valid email address');else setFieldOk('email');}break;
+    case'user': if(val.length<3)setFieldError('user','At least 3 characters');else if(!/^[a-z0-9._]+$/.test(val))setFieldError('user','Lowercase, numbers, dots, underscores only');else setFieldOk('user',true);break;
+    case'pw':{if(!val){clearFieldState('pw');return;}const score=pwStrength(val);if(val.length<8)setFieldError('pw','At least 8 characters');else if(score<2)setFieldError('pw','Add numbers or symbols to strengthen');else setFieldOk('pw');const p2=(document.getElementById('inp-pw2')||{}).value||'';if(p2)liveValidate('pw2');}break;
+    case'pw2':{const pw=(document.getElementById('inp-pw')||{}).value||'';if(!val){clearFieldState('pw2');return;}if(val!==pw)setFieldError('pw2','Passwords do not match');else setFieldOk('pw2',true);}break;
+  }
+}
+
+function pwStrength(pw){let s=0;if(pw.length>=8)s++;if(/[A-Z]/.test(pw))s++;if(/[0-9]/.test(pw))s++;if(/[^A-Za-z0-9]/.test(pw))s++;return s;}
+const ICON_EYE='<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/></svg>';
+const ICON_EYE_OFF='<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M17.94 17.94A10.94 10.94 0 0112 19c-7 0-11-7-11-7a20.6 20.6 0 015.06-5.94M9.9 4.24A10.4 10.4 0 0112 4c7 0 11 7 11 7a20.6 20.6 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 1l22 22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+function togglePw(id,btn){const inp=document.getElementById(id);if(!inp)return;inp.type=inp.type==='password'?'text':'password';btn.innerHTML=inp.type==='password'?ICON_EYE:ICON_EYE_OFF;}
+function clearLoginError(){['login-error','err-login-user','err-login-pw'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});['inp-login-user','inp-login-pw'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('error');});}
+function submitLogin(){
+  const u=(document.getElementById('inp-login-user')||{}).value||'';
+  const p=(document.getElementById('inp-login-pw')||{}).value||'';
+  let ok=true;
+  if(!u.trim()){const e=document.getElementById('err-login-user');if(e){e.style.display='flex';}const i=document.getElementById('inp-login-user');if(i)i.classList.add('error');ok=false;}
+  if(!p){const e=document.getElementById('err-login-pw');if(e){e.style.display='flex';}const i=document.getElementById('inp-login-pw');if(i)i.classList.add('error');ok=false;}
+  if(!ok)return;
+  const hasServices=Object.values(connectedServices).some(s=>s.connected);
+  if(hasServices){pinFlowMode='verify';go('s-pin');}else{go('s-services');}
+}
+function validateAndSubmitSignup(){
+  const name  = (document.getElementById('inp-name')||{}).value||'';
+  const id    = (document.getElementById('inp-id')||{}).value||'';
+  const email = (document.getElementById('inp-email')||{}).value||'';
+  const user  = (document.getElementById('inp-user')||{}).value||'';
+  const pw    = (document.getElementById('inp-pw')||{}).value||'';
+  const pw2   = (document.getElementById('inp-pw2')||{}).value||'';
+  let ok = true;
+
+  if(!name.trim()){ setFieldError('name','Full name is required'); ok=false; }
+  else if(name.trim().length<2){ setFieldError('name','Name must be at least 2 characters'); ok=false; }
+  else if(!/^[a-zA-Z\s'\-]+$/.test(name.trim())){ setFieldError('name','Letters only'); ok=false; }
+  else setFieldOk('name');
+
+  if(!id.trim()){ setFieldError('id','National ID is required'); ok=false; }
+  else if(!/^\d{7,8}$/.test(id.trim())){ setFieldError('id','Enter a valid 7-8 digit ID'); ok=false; }
+  else setFieldOk('id');
+
+  if(!email.trim()){ setFieldError('email','Email address is required'); ok=false; }
+  else if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())){ setFieldError('email','Enter a valid email address'); ok=false; }
+  else setFieldOk('email');
+
+  if(!user.trim()){ setFieldError('user','Username is required'); ok=false; }
+  else if(user.length<3){ setFieldError('user','At least 3 characters'); ok=false; }
+  else if(!/^[a-z0-9._]+$/.test(user)){ setFieldError('user','Lowercase letters, numbers, dots or underscores'); ok=false; }
+  else setFieldOk('user',true);
+
+  if(!pw){ setFieldError('pw','Password is required'); ok=false; }
+  else if(pw.length<8){ setFieldError('pw','At least 8 characters'); ok=false; }
+  else if(pwStrength(pw)<2){ setFieldError('pw','Add numbers or symbols to strengthen'); ok=false; }
+  else setFieldOk('pw');
+
+  if(!pw2){ setFieldError('pw2','Please confirm your password'); ok=false; }
+  else if(pw2!==pw){ setFieldError('pw2','Passwords do not match'); ok=false; }
+  else setFieldOk('pw2',true);
+
+  if(!ok){
+    const firstErr=document.querySelector('#s-signup .form-input.error');
+    if(firstErr)firstErr.scrollIntoView({behavior:'smooth',block:'center'});
+    return;
+  }
+  const dname=document.getElementById('dash-user-name');
+  if(dname)dname.textContent=name.trim();
+  go('s-services');
+}
+
+// ══════════════════════════════════════════════
+//  NAVIGATION
+// ══════════════════════════════════════════════
+function go(id){
+  if(id==='s-alloc-back')return go('s-services');
+  if(id==='s-integ')return;// integ is triggered from services, not go()
+  if(id==='s-loading')return runLoading();
+  if(id==='s-success')updateSuccessStats();
+  if(id==='s-pin')resetPinScreen();
+  if(id==='s-dashboard'){initAccumulators();updateDashboardHome();}
+  if(id==='s-services')renderServicesScreen();
+  const from=document.getElementById(current);const to=document.getElementById(id);
+  if(!to)return;
+  from.classList.remove('active');to.classList.add('active');
+  current=id;renderDots();
+}
+
+function switchTab(tab){
+  if(current!=='s-dashboard')go('s-dashboard');
+  activeTab=tab;
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('tab-active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>{b.classList.remove('active');const ni=b.querySelector('.nav-indicator');if(ni)ni.remove();});
+  const panel=document.getElementById('tab-'+tab);if(panel)panel.classList.add('tab-active');
+  const nb=document.getElementById('nav-'+tab);if(nb){nb.classList.add('active');const d=document.createElement('div');d.className='nav-indicator';nb.appendChild(d);}
+  if(tab==='budgets')renderSchedule();
+  if(tab==='history')renderHistory('all');
+  if(tab==='rewards')renderRewards();
+  if(tab==='profile')renderProfile();
+}
+
+// ══════════════════════════════════════════════
+//  SET SECURITY PIN (new screen — setup, confirm, lockout)
+// ══════════════════════════════════════════════
+let pinMode='setup';        // 'setup' | 'confirm'
+let pinFlowMode='setup';    // 'setup' (new PIN, post-signup) | 'verify' (existing PIN, sign-in)
+let pinFirst='';
+let pinCurrent='';
+let pinFailedAttempts=0;
+let pinLocked=false;
+
+function pinAnnounce(msg){
+  const el=document.getElementById('pin-live');
+  if(el)el.textContent=msg;
+}
+
+function renderPinDots(){
+  document.querySelectorAll('#pin-dots .pin-dot').forEach((d,i)=>d.classList.toggle('filled',i<pinCurrent.length));
+}
+
+function resetPinScreen(){
+  pinMode='setup';pinFirst='';pinCurrent='';pinFailedAttempts=0;pinLocked=false;
+  const t=document.getElementById('pin-title');
+  const s=document.getElementById('pin-sub');
+  if(pinFlowMode==='verify'){
+    if(t)t.textContent='Enter your PIN';
+    if(s)s.textContent='Enter your 4-digit PIN to unlock Wallex';
+  }else{
+    if(t)t.textContent='Choose a 4-digit PIN to secure your wallet';
+    if(s)s.textContent="You'll use this PIN to unlock Wallex";
+  }
+  const e=document.getElementById('pin-error');if(e)e.style.display='none';
+  const kp=document.getElementById('pin-keypad');if(kp)kp.classList.remove('locked');
+  renderPinDots();
+}
+
+function pinPress(d){
+  if(pinLocked)return;
+  if(pinCurrent.length>=4)return;
+  pinCurrent+=d;
+  renderPinDots();
+  if(pinCurrent.length===4)setTimeout(pinAdvance,220);
+}
+
+function pinBackspace(){
+  if(pinLocked)return;
+  pinCurrent=pinCurrent.slice(0,-1);
+  renderPinDots();
+}
+
+function pinAdvance(){
+  if(pinFlowMode==='verify'){
+    pinAnnounce('PIN verified. Entering dashboard.');
+    go('s-dashboard');
+    return;
+  }
+  if(pinMode==='setup'){
+    pinFirst=pinCurrent;pinCurrent='';pinMode='confirm';
+    document.getElementById('pin-title').textContent='Confirm your PIN';
+    document.getElementById('pin-sub').textContent='Enter the same 4 digits again';
+    document.getElementById('pin-error').style.display='none';
+    renderPinDots();
+    pinAnnounce('PIN set. Now confirm your PIN.');
+    return;
+  }
+  // confirm mode
+  if(pinCurrent===pinFirst){
+    pinAnnounce('PIN confirmed. Entering dashboard.');
+    go('s-dashboard');
+    return;
+  }
+  pinFailedAttempts++;
+  const errEl=document.getElementById('pin-error');
+  const wrap=document.getElementById('pin-dots');
+  wrap.classList.add('shake');
+  if(pinFailedAttempts>=3){
+    lockPinScreen();
+  }else{
+    errEl.textContent="PINs didn't match. Try again.";
+    errEl.style.display='block';
+    pinAnnounce("PINs did not match. Please try again.");
+  }
+  setTimeout(()=>{
+    wrap.classList.remove('shake');
+    if(!pinLocked){
+      pinMode='setup';pinFirst='';pinCurrent='';
+      document.getElementById('pin-title').textContent='Choose a 4-digit PIN to secure your wallet';
+      document.getElementById('pin-sub').textContent="You'll use this PIN to unlock Wallex";
+      renderPinDots();
+    }
+  },500);
+}
+
+function lockPinScreen(){
+  pinLocked=true;
+  const kp=document.getElementById('pin-keypad');if(kp)kp.classList.add('locked');
+  const errEl=document.getElementById('pin-error');
+  let secs=30;
+  errEl.style.display='block';
+  errEl.textContent=`Too many attempts. Try again in ${secs}s`;
+  pinAnnounce(`Locked out after 3 incorrect attempts. Try again in ${secs} seconds.`);
+  const iv=setInterval(()=>{
+    secs--;
+    if(secs<=0){
+      clearInterval(iv);
+      resetPinScreen();
+    }else{
+      errEl.textContent=`Too many attempts. Try again in ${secs}s`;
+    }
+  },1000);
+}
+
+function pinBiometric(){
+  if(pinLocked)return;
+  pinAnnounce('Biometric authentication successful.');
+  go('s-dashboard');
+}
+
+document.addEventListener('keydown',function(e){
+  if(current!=='s-pin'||pinLocked)return;
+  if(e.key>='0'&&e.key<='9'){pinPress(e.key);}
+  else if(e.key==='Backspace'){pinBackspace();}
+});
+
+// ══════════════════════════════════════════════
+//  FINANCIAL SERVICES DATA
+// ══════════════════════════════════════════════
+const financialServices=[
+  {id:'mpesa',   name:'M-Pesa',         provider:'Safaricom',       icon:'📱', color:'#00A651', bg:'#E9FBF0', ph:'e.g. 0712 345 678',  steps:['Authenticating with Safaricom','Verifying M-Pesa account','Enabling auto-split on receive','M-Pesa connected ✓']},
+  {id:'airtel',  name:'Airtel Money',   provider:'Airtel Kenya',     icon:'🔴', color:'#ED1C24', bg:'#FDEAEA', ph:'e.g. 0733 456 789',  steps:['Authenticating with Airtel','Verifying Airtel Money account','Linking wallet','Airtel Money connected ✓']},
+  {id:'equity',  name:'Equity Bank',    provider:'EazzyPay',         icon:'🏦', color:'#E50000', bg:'#FDEAEA', ph:'e.g. 0763 123 456',  steps:['Connecting to Equity','Verifying account number','Linking EazzyPay wallet','Equity Bank connected ✓']},
+  {id:'kcb',     name:'KCB Bank',       provider:'KCB Mobile',       icon:'💙', color:'#00529B', bg:'#E5F1FE', ph:'e.g. Account no.',    steps:['Authenticating with KCB','Verifying KCB account','Linking KCB Mobile','KCB Bank connected ✓']},
+  {id:'coop',    name:'Co-op Bank',     provider:'MCo-opCash',       icon:'🟢', color:'#006B3C', bg:'#E4F3F3', ph:'e.g. 0711 234 567',  steps:['Connecting to Co-op','Verifying account','Linking MCo-opCash','Co-op Bank connected ✓']},
+  {id:'absa',    name:'Absa Kenya',     provider:'Absa Mobile',      icon:'🔵', color:'#DC143C', bg:'#FDEAEA', ph:'e.g. Account no.',    steps:['Connecting to Absa','Verifying account','Linking Absa Mobile','Absa Kenya connected ✓']},
+  {id:'ncba',    name:'NCBA Bank',      provider:'NCBA Loop',        icon:'🟣', color:'#4B0082', bg:'#F0EBFE', ph:'e.g. 0722 987 654',  steps:['Connecting to NCBA','Verifying account','Linking NCBA Loop','NCBA Bank connected ✓']},
+  {id:'stanchart',name:'Stanchart',    provider:'SC Mobile Kenya',   icon:'🔷', color:'#0067B1', bg:'#E5F1FE', ph:'e.g. Account no.',    steps:['Connecting to Stanchart','Verifying account','Linking SC Mobile','Stanchart connected ✓']},
+];
+
+// Tracks connected state per service: { id: { connected:bool, account:string } }
+let connectedServices={};
+let connectingServiceId=null;// which service is currently being animated
+
+// ══════════════════════════════════════════════
+//  SERVICES SCREEN
+// ══════════════════════════════════════════════
+function renderServicesScreen(){
+  const list=document.getElementById('services-list');
+  if(!list)return;
+  list.innerHTML=financialServices.map(svc=>{
+    const state=connectedServices[svc.id];
+    const isConnected=state&&state.connected;
+    return `<div class="service-card${isConnected?' connected':''}" id="svc-card-${svc.id}">
+      <div class="service-header">
+        <div class="service-logo" style="background:${svc.bg};">${svc.icon}</div>
+        <div>
+          <div class="service-name">${svc.name}</div>
+          <div class="service-provider">${svc.provider}</div>
+        </div>
+        <div class="service-status">
+          ${isConnected
+            ?`<div class="svc-connected-badge">✓ Connected</div>
+               <button class="svc-disconnect-btn" onclick="disconnectService('${svc.id}')">Disconnect</button>`
+            :`<button class="svc-connect-btn" onclick="startConnectService('${svc.id}')">Connect</button>`
+          }
+        </div>
+      </div>
+      ${isConnected?`
+        <div class="service-account-row">
+          <div class="svc-account-label">Linked account</div>
+          <div class="svc-account-verified">
+            <svg width="13" height="13" fill="none" viewBox="0 0 13 13"><circle cx="6.5" cy="6.5" r="5.5" fill="${svc.color}" opacity="0.15"/><circle cx="6.5" cy="6.5" r="5.5" stroke="${svc.color}" stroke-width="1.3"/><path d="M4 6.5l2 2 3.5-3.5" stroke="${svc.color}" stroke-width="1.4" stroke-linecap="round"/></svg>
+            ${escapeHtml(state.account||'Account verified')}
+          </div>
+        </div>`:''}
+    </div>`;
+  }).join('');
+  updateServicesFooter();
+}
+
+function startConnectService(svcId){
+  const svc=financialServices.find(s=>s.id===svcId);
+  if(!svc)return;
+  // Prompt for account number via a mini inline form in the card
+  const card=document.getElementById('svc-card-'+svcId);
+  if(!card)return;
+  // Inject inline account input into the card
+  const existing=card.querySelector('.svc-inline-form');
+  if(existing){existing.remove();return;}
+  const form=document.createElement('div');
+  form.className='svc-inline-form';
+  form.style.cssText='margin-top:12px;padding-top:12px;border-top:1px solid var(--border);';
+  form.innerHTML=`
+    <div class="svc-account-label">${svc.id==='mpesa'||svc.id==='airtel'||svc.id==='coop'?'Phone number':'Account number / phone'}</div>
+    <div style="display:flex;gap:8px;margin-top:6px;">
+      <input class="svc-phone-input" type="tel" placeholder="${svc.ph}" id="svc-input-${svc.id}" inputmode="numeric"/>
+      <button style="padding:10px 16px;background:var(--forest);color:white;border:none;border-radius:9px;font-size:12px;font-weight:800;cursor:pointer;font-family:'Poppins',sans-serif;white-space:nowrap;" onclick="confirmConnectService('${svc.id}')">Link →</button>
+    </div>
+    <div id="svc-input-err-${svc.id}" style="display:none;font-size:11px;font-weight:700;color:var(--red);margin-top:5px;">Please enter a valid account number</div>`;
+  card.appendChild(form);
+  setTimeout(()=>document.getElementById('svc-input-'+svc.id)&&document.getElementById('svc-input-'+svc.id).focus({preventScroll:true}),100);
+}
+
+function confirmConnectService(svcId){
+  const svc=financialServices.find(s=>s.id===svcId);
+  const inp=document.getElementById('svc-input-'+svcId);
+  const err=document.getElementById('svc-input-err-'+svcId);
+  if(!inp||!svc)return;
+  const val=inp.value.trim();
+  if(!val){if(err)err.style.display='block';inp.style.borderColor='var(--red)';return;}
+  // Navigate to integ animation
+  connectingServiceId=svcId;
+  connectedServices[svcId]={connected:false,account:val};// pending
+  runServiceInteg(svc,val);
+}
+
+function disconnectService(svcId){
+  delete connectedServices[svcId];
+  renderServicesScreen();
+  showToast(`${financialServices.find(s=>s.id===svcId)?.name||'Service'} disconnected`,'info','toast-host',2000);
+}
+
+function updateServicesFooter(){
+  const count=Object.values(connectedServices).filter(s=>s.connected).length;
+  const btn=document.getElementById('services-continue-btn');
+  const strip=document.getElementById('services-connected-count');
+  const label=document.getElementById('services-connected-label');
+  if(count>0){
+    if(btn){btn.disabled=false;btn.style.opacity='1';btn.textContent=`Continue with ${count} service${count>1?'s':''} →`;}
+    if(strip)strip.style.display='flex';
+    if(label)label.textContent=`${count} service${count>1?'s':''} connected`;
+  } else {
+    if(btn){btn.disabled=true;btn.style.opacity='0.4';btn.textContent='Connect at least one to continue';}
+    if(strip)strip.style.display='none';
+  }
+}
+
+function goToServicesNext(){
+  const count=Object.values(connectedServices).filter(s=>s.connected).length;
+  if(count===0){showToast('Connect at least one service first','warning','toast-host',2500);return;}
+  go('s-alloc');
+}
+
+// ══════════════════════════════════════════════
+//  M-PESA / SERVICE INTEGRATION ANIMATION
+// ══════════════════════════════════════════════
+function runServiceInteg(svc,account){
+  // Update integ screen UI for this service
+  const iconEl=document.getElementById('integ-service-icon');
+  const nameEl=document.getElementById('integ-service-name');
+  const subEl=document.getElementById('integ-service-sub');
+  if(iconEl)iconEl.textContent=svc.icon;
+  if(nameEl)nameEl.textContent='Linking to '+svc.name;
+  if(subEl)subEl.textContent='Securely connecting your '+svc.provider+' account';
+  // Populate steps
+  const stepsEl=document.getElementById('integ-steps');
+  if(stepsEl)stepsEl.innerHTML=svc.steps.map((s,i)=>`<div class="integ-step" id="istep${i}"><div class="step-dot">${i===3?'✓':(i+1)}</div>${s}</div>`).join('');
+  // Navigate to integ screen
+  const from=document.getElementById(current);const to=document.getElementById('s-integ');
+  if(from)from.classList.remove('active');if(to)to.classList.add('active');
+  current='s-integ';renderDots();
+  // Animate
+  const fill=document.getElementById('integ-fill');
+  const steps=document.querySelectorAll('.integ-step');
+  let p=0,s=0;
+  steps.forEach(el=>el.className='integ-step');
+  if(fill)fill.style.width='0%';
+  const iv=setInterval(()=>{
+    p=Math.min(p+4,100);if(fill)fill.style.width=p+'%';
+    const ns=Math.floor(p/26);
+    if(ns>s){if(s<steps.length)steps[s].className='integ-step done';s=ns;if(s<steps.length)steps[s].className='integ-step active';}
+    if(p>=100){
+      clearInterval(iv);
+      steps.forEach(el=>el.className='integ-step done');
+      setTimeout(()=>{
+        // Mark as fully connected
+        connectedServices[svc.id]={connected:true,account};
+        // Return to services screen
+        const from2=document.getElementById(current);const to2=document.getElementById('s-services');
+        if(from2)from2.classList.remove('active');if(to2)to2.classList.add('active');
+        current='s-services';renderDots();
+        renderServicesScreen();
+        showToast(`${svc.name} connected successfully ✓`,'success','toast-host',2500);
+      },600);
+    }
+  },80);
+}
+function runLoading(){
+  document.getElementById(current).classList.remove('active');
+  document.getElementById('s-loading').classList.add('active');
+  current='s-loading';renderDots();
+  setTimeout(()=>go('s-success'),2400);
+}
+
+// ══════════════════════════════════════════════
+//  ALLOCATION — PERCENTAGE TARGETS
+// ══════════════════════════════════════════════
+function renderAlloc(){
+  const container=document.getElementById('alloc-items');
+  if(cats.length===0){
+    container.innerHTML=`<div class="alloc-empty"><div class="alloc-empty-icon">📭</div><div class="alloc-empty-text">No categories yet</div><div style="font-size:12px;color:var(--text-3);">Tap "+ Add category" to start</div></div>`;
+    refreshAllocTotals();return;
+  }
+  container.innerHTML=cats.map((c,i)=>`
+    <div class="alloc-card" id="acard-${i}">
+      <div class="alloc-top-row">
+        <div class="alloc-icon" style="background:${c.bg};" onclick="cycleIcon(${i})" title="Tap to change">${c.emoji}</div>
+        <input class="alloc-name-input" type="text" value="${escapeHtml(c.name)}" placeholder="Category name"
+          oninput="renameCategory(${i},this.value)"
+          onblur="validateCatName(${i},this)"
+          onfocus="clearCatNameError(${i},this)"/>
+        <button class="alloc-delete-btn${cats.length===1?' disabled':''}" onclick="deleteCategory(${i})" title="${cats.length===1?'Need at least one':'Delete'}">
+          <svg width="13" height="13" fill="none" viewBox="0 0 13 13"><path d="M2 3.5h9M5 3.5V2h3v1.5M3.5 3.5l.6 7.5h4.8l.6-7.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+      <div class="alloc-amount-row" id="arow-${i}">
+        <input class="alloc-amount-input" type="number" min="0" max="100" step="1" inputmode="numeric"
+          value="${c.pct||''}" placeholder="0"
+          oninput="updatePct(${i},this.value)"
+          onblur="validateCatPct(${i},this)"
+          onfocus="clearPctError(${i})"/>
+        <span class="alloc-pct-suffix">%</span>
+      </div>
+      <div id="pct-hint-${i}" style="display:none;font-size:11px;margin-top:5px;font-weight:700;color:var(--red);animation:fadeSlideIn 0.2s ease;"></div>
+      <div class="alloc-bar-wrap"><div class="alloc-bar-fill" id="abar-${i}" style="width:${Math.min(c.pct||0,100)}%"></div></div>
+      <div class="alloc-row-divider"></div>
+      <div class="alloc-target-row" id="trow-${i}">
+        <span class="alloc-target-label">TARGET</span>
+        <input class="alloc-target-input" type="number" min="0" step="100" inputmode="numeric"
+          value="${c.target||''}" placeholder="e.g. 24,000"
+          oninput="updateTarget(${i},this.value)"
+          onblur="validateTarget(${i},this)"
+          onfocus="clearTargetError(${i})"/>
+        <span class="alloc-target-suffix">KES</span>
+      </div>
+      <div id="target-hint-${i}" style="display:none;font-size:11px;margin-top:5px;font-weight:700;color:var(--text-3);animation:fadeSlideIn 0.2s ease;"></div>
+    </div>`).join('');
+  refreshAllocTotals();
+}
+
+function refreshAllocTotals(){
+  const total=totalPct();
+  const surplus=surplusPct();
+  // Update surplus row
+  const sr=document.getElementById('surplus-auto-row');
+  if(sr){
+    document.getElementById('surplus-auto-pct').textContent=surplus+'%';
+    sr.style.display=surplus>0?'flex':'none';
+  }
+  // Update footer
+  const te=document.getElementById('alloc-total');
+  if(te){
+    if(total>100){te.textContent=`${total}% — over by ${total-100}%`;te.style.color='var(--red)';}
+    else if(total===100){te.textContent='100% — fully allocated';te.style.color='var(--forest)';}
+    else{te.textContent=`${total}% allocated · ${surplus}% → Surplus`;te.style.color='var(--gold)';}
+  }
+  // Update header live
+  const lv=document.getElementById('budget-total-live');if(lv)lv.textContent=total+'% set';
+  const cc=document.getElementById('budget-cat-count');if(cc)cc.textContent='Across '+cats.length+' categor'+(cats.length===1?'y':'ies')+(surplus>0?` · ${surplus}% surplus`:'');
+  // Update bar fills
+  cats.forEach((c,i)=>{const b=document.getElementById('abar-'+i);if(b)b.style.width=Math.min(c.pct||0,100)+'%';});
+  // Warn if over 100
+  const host=document.getElementById('alloc-toast-host');
+  if(host&&total>100){host.innerHTML=`<div class="alloc-warn-strip">⚠️ Total exceeds 100% — reduce by ${total-100}%</div>`;}
+  else if(host){host.innerHTML='';}
+}
+
+function updatePct(i,v){
+  const val=parseFloat(v);cats[i].pct=isNaN(val)||val<0?0:Math.min(val,100);
+  clearPctError(i);refreshAllocTotals();
+}
+function validateCatPct(i,inp){
+  const val=parseFloat(inp.value);
+  const hint=document.getElementById('pct-hint-'+i);
+  const row=document.getElementById('arow-'+i);
+  if(!hint||!row)return;
+  if(inp.value===''||inp.value==='0'){
+    row.style.borderColor='var(--red)';row.style.background='#fff8f8';row.style.boxShadow='0 0 0 3px rgba(217,96,95,0.1)';
+    hint.style.display='block';hint.innerHTML='⚠ Set a percentage for this category';
+  } else if(val>100){
+    row.style.borderColor='var(--red)';hint.style.display='block';hint.innerHTML='⚠ Cannot exceed 100%';
+  } else {clearPctError(i);}
+}
+function clearPctError(i){
+  const row=document.getElementById('arow-'+i);const hint=document.getElementById('pct-hint-'+i);
+  if(row){row.style.borderColor='';row.style.background='';row.style.boxShadow='';}
+  if(hint){hint.style.display='none';}
+}
+
+function updateTarget(i,v){
+  const val=parseFloat(v);
+  cats[i].target=isNaN(val)||val<0?0:val;
+  clearTargetError(i);
+}
+function validateTarget(i,inp){
+  const val=parseFloat(inp.value);
+  const hint=document.getElementById('target-hint-'+i);
+  const row=document.getElementById('trow-'+i);
+  if(!inp.value||inp.value==='0'){
+    if(hint){hint.style.display='block';hint.innerHTML='💡 No target set — progress won\'t be tracked';}
+  } else if(val<0){
+    if(row){row.style.borderColor='var(--red)';row.style.background='#fff8f8';}
+    if(hint){hint.style.display='block';hint.style.color='var(--red)';hint.innerHTML='⚠ Target cannot be negative';}
+  } else if(val>10000000){
+    if(row){row.style.borderColor='var(--gold)';row.style.boxShadow='0 0 0 3px rgba(217,127,90,0.1)';}
+    if(hint){hint.style.display='block';hint.style.color='var(--gold)';hint.innerHTML='⚡ Very large target — double check';}
+  } else {
+    clearTargetError(i);
+  }
+}
+function clearTargetError(i){
+  const row=document.getElementById('trow-'+i);const hint=document.getElementById('target-hint-'+i);
+  if(row){row.style.borderColor='';row.style.background='';row.style.boxShadow='';}
+  if(hint){hint.style.display='none';hint.style.color='var(--text-3)';}
+}
+function validateCatName(i,inp){
+  if(!inp.value.trim()){inp.style.background='#fff0f0';inp.style.outline='2px solid var(--red)';inp.style.outlineOffset='1px';showToast('Category name cannot be empty','error','alloc-toast-host',2500);inp.focus({preventScroll:true});}
+}
+function clearCatNameError(i,inp){inp.style.background='';inp.style.outline='';}
+function renameCategory(i,v){cats[i].name=v;if(catAccumulated[i]!==undefined)catAccumulated[i];/* name syncs live */}
+function deleteCategory(i){
+  if(cats.length<=1){const card=document.getElementById('acard-'+i);if(card){card.style.animation='none';card.offsetHeight;card.style.animation='shake 0.35s ease';}showToast('You need at least one category','warning','alloc-toast-host',2500);return;}
+  const name=cats[i].name||'Category';
+  cats.splice(i,1);catAccumulated.splice(i,1);
+  renderAlloc();showToast(`"${name}" removed`,'info','alloc-toast-host',2000);
+}
+function addCategory(){
+  if(cats.length>=12){showToast('Maximum 12 categories','warning','alloc-toast-host',2500);return;}
+  const idx=addCatCounter%iconPalette.length;
+  cats.push({name:'',emoji:iconPalette[idx],bg:bgPalette[idx],pct:0,target:0});
+  catAccumulated.push(0);addCatCounter++;renderAlloc();
+  setTimeout(()=>{const items=document.getElementById('alloc-items');const last=items&&items.lastElementChild;if(last){last.scrollIntoView({behavior:'smooth',block:'center'});const inp=last.querySelector('.alloc-name-input');if(inp){inp.focus({preventScroll:true});inp.select();}}},80);
+}
+function cycleIcon(i){
+  let idx=iconPalette.indexOf(cats[i].emoji);idx=(idx+1)%iconPalette.length;
+  cats[i].emoji=iconPalette[idx];cats[i].bg=bgPalette[idx];
+  const card=document.getElementById('acard-'+i);
+  if(card){const ic=card.querySelector('.alloc-icon');if(ic){ic.textContent=cats[i].emoji;ic.style.background=cats[i].bg;}}
+}
+
+// ── goReview: validate and build preview ──
+function goReview(){
+  if(cats.length===0){showToast('Add at least one category first','error','alloc-toast-host',3000);return;}
+  const unnamed=cats.filter(c=>!c.name.trim());
+  if(unnamed.length>0){showToast(`${unnamed.length} categor${unnamed.length>1?'ies need':'y needs'} a name`,'error','alloc-toast-host',3000);cats.forEach((c,i)=>{if(!c.name.trim()){const card=document.getElementById('acard-'+i);if(card){const inp=card.querySelector('.alloc-name-input');if(inp){inp.style.background='#fff0f0';inp.style.outline='2px solid var(--red)';}}}}); return;}
+  const total=totalPct();
+  if(total===0){showToast('Set at least one percentage first','error','alloc-toast-host',3000);return;}
+  if(total>100){showToast(`Total is ${total}% — reduce by ${total-100}%`,'error','alloc-toast-host',3000);return;}
+  const zeroCats=cats.filter(c=>!c.pct||c.pct===0);
+  if(zeroCats.length>0&&zeroCats.length<cats.length)showToast(`${zeroCats.length} categor${zeroCats.length>1?'ies have':'y has'} 0% — ok to continue`,'warning','alloc-toast-host',3000);
+  const surplus=surplusPct();
+  // Build review items
+  document.getElementById('review-items').innerHTML=cats.map(c=>{
+    const isZero=!c.pct;
+    const hasTarget=c.target&&c.target>0;
+    const perDay=hasTarget?Math.round(c.target/30):null;
+    return `<div class="review-item" style="${isZero?'opacity:0.5;':''}">
+      <div class="review-item-icon" style="background:${c.bg};">${c.emoji}</div>
+      <div style="flex:1;">
+        <div class="review-item-name">${escapeHtml(c.name)||'Unnamed'}</div>
+        <div class="review-item-pct">${isZero?'0% — not splitting':'Split '+c.pct+'% per payment'}${hasTarget?' · Target: '+fmtKES(c.target):' · No target set'}</div>
+        ${hasTarget&&perDay?`<div style="font-size:10px;color:var(--text-3);font-weight:700;margin-top:2px;">≈ ${fmtKES(perDay)}/day needed</div>`:''}
+      </div>
+      <div style="text-align:right;">
+        <div class="review-item-amount" style="color:${isZero?'var(--text-3)':'var(--forest)'};">${c.pct||0}%</div>
+        ${hasTarget?`<div style="font-size:11px;font-weight:800;color:var(--text-2);margin-top:3px;">${fmtKES(c.target)}</div>`:`<div style="font-size:10px;color:var(--text-3);margin-top:3px;">No target</div>`}
+      </div>
+    </div>`;
+  }).join('');
+  if(surplus>0){
+    document.getElementById('review-items').innerHTML+=`
+      <div class="review-item" style="background:var(--forest-light);border:1.5px solid var(--lime);">
+        <div class="review-item-icon" style="background:rgba(20,104,129,0.15);">💰</div>
+        <div><div class="review-item-name" style="color:var(--forest);">Surplus (auto)</div><div class="review-item-pct">Remainder from every payment</div></div>
+        <div class="review-item-amount" style="color:var(--forest);">${surplus}%</div>
+      </div>`;
+  }
+  const tv=document.getElementById('review-total-val');if(tv)tv.textContent=total+'% split';
+  const tn=document.getElementById('review-total-note');if(tn)tn.textContent=`${cats.length} categories + ${surplus>0?surplus+'% surplus auto-catch':'0% surplus (fully allocated)'}`;
+  const se=document.getElementById('review-surplus-target');if(se)se.textContent=surplus+'%';
+  go('s-review');
+}
+
+// ══════════════════════════════════════════════
+//  SUCCESS STATS
+// ══════════════════════════════════════════════
+function updateSuccessStats(){
+  const ce=document.getElementById('ss-cat-count');if(ce)ce.textContent=cats.length+(surplusPct()>0?'+1':'');
+  const de=document.getElementById('ss-daily-limit');if(de)de.textContent=surplusPct()+'% surplus';
+}
+
+// ══════════════════════════════════════════════
+//  ACCUMULATOR INIT
+// ══════════════════════════════════════════════
+function initAccumulators(){
+  // Pad catAccumulated to match cats length
+  while(catAccumulated.length<cats.length)catAccumulated.push(0);
+  catAccumulated.length=cats.length;
+}
+
+// ══════════════════════════════════════════════
+//  RECEIVE M-PESA — MODAL + SPLIT LOGIC
+// ══════════════════════════════════════════════
+function openReceiveModal(){
+  const m=document.getElementById('receive-modal');if(m){m.classList.add('open');const ai=document.getElementById('receive-amount');if(ai){ai.value='';ai.focus({preventScroll:true});}}
+  clearReceiveError();
+}
+function closeReceiveModal(e){if(!e||e.target===document.getElementById('receive-modal'))document.getElementById('receive-modal').classList.remove('open');}
+function setQuickAmount(n){const i=document.getElementById('receive-amount');if(i){i.value=n;i.classList.remove('error-field');}clearReceiveError();}
+function clearReceiveError(){const e=document.getElementById('receive-err');if(e)e.style.display='none';const i=document.getElementById('receive-amount');if(i)i.classList.remove('error-field');}
+
+function processPayment(){
+  const amtEl=document.getElementById('receive-amount');
+  const senderEl=document.getElementById('receive-sender');
+  const errEl=document.getElementById('receive-err');
+  const amt=parseFloat(amtEl&&amtEl.value)||0;
+  if(!amt||amt<=0){if(amtEl)amtEl.classList.add('error-field');if(errEl){errEl.style.display='block';errEl.textContent='Please enter a valid amount';}return;}
+  if(amt<1){if(errEl){errEl.style.display='block';errEl.textContent='Minimum amount is KES 1';}return;}
+  if(amt>10000000){if(errEl){errEl.style.display='block';errEl.textContent='Amount seems too large — double check';}return;}
+  const sender=(senderEl&&senderEl.value.trim())||'M-Pesa';
+  document.getElementById('receive-modal').classList.remove('open');
+  triggerSplitAnimation(amt,sender);
+}
+
+function triggerSplitAnimation(amt,sender){
+  // 1. Show M-Pesa notification banner
+  const notif=document.getElementById('mpesa-notif');
+  if(notif){
+    document.getElementById('mpesa-notif-amount').textContent=fmtKES(amt);
+    document.getElementById('mpesa-notif-sender').textContent=`From: ${sender}`;
+    notif.classList.add('show');
+  }
+  // 2. Show splitting overlay after 0.8s
+  setTimeout(()=>{
+    const overlay=document.getElementById('split-overlay');
+    if(overlay)overlay.classList.add('show');
+  },800);
+  // 3. Compute splits and apply after 2.4s
+  setTimeout(()=>{
+    const overlay=document.getElementById('split-overlay');
+    if(overlay)overlay.classList.remove('show');
+    if(notif)notif.classList.remove('show');
+    applySplit(amt,sender);
+  },2400);
+}
+
+function applySplit(amt,sender){
+  // Compute splits
+  const splits=cats.map(c=>{
+    const portion=Math.floor(amt*(c.pct||0)/100);
+    return{name:c.name,emoji:c.emoji,bg:c.bg,pct:c.pct||0,amount:portion};
+  });
+  const totalSplit=splits.reduce((s,sp)=>s+sp.amount,0);
+  const surplus=amt-totalSplit;
+  // Accumulate
+  splits.forEach((sp,i)=>{if(catAccumulated[i]!==undefined)catAccumulated[i]+=sp.amount;});
+  surplusAccumulated+=surplus;
+  totalReceived+=amt;
+  // Log
+  const ref='QM'+Math.random().toString(36).substr(2,6).toUpperCase();
+  incomingLog.unshift({id:Date.now(),amount:amt,sender,time:now(),ref,splits,surplus,expanded:false});
+  // Show split receipt overlay
+  showSplitReceipt(amt,sender,splits,surplus);
+  // Update dashboard
+  updateDashboardHome();
+}
+
+// ── Split Receipt Overlay ──
+function showSplitReceipt(amt,sender,splits,surplus){
+  const sr=document.getElementById('split-receipt');
+  document.getElementById('sr-amount').textContent=fmtKES(amt);
+  document.getElementById('sr-from').textContent=`Received from ${sender}`;
+  document.getElementById('sr-splits').innerHTML=splits.map(sp=>`
+    <div class="split-row">
+      <div class="split-row-icon" style="background:${sp.bg};">${sp.emoji}</div>
+      <div style="flex:1;">
+        <div class="split-row-name">${escapeHtml(sp.name)}</div>
+        <div class="split-row-pct">${sp.pct}% split</div>
+      </div>
+      <div class="split-row-amount">${fmtKES(sp.amount)}</div>
+    </div>`).join('');
+  const surplusEl=document.getElementById('sr-surplus');
+  const surplusAmt=document.getElementById('sr-surplus-amt');
+  if(surplus>0){surplusEl.style.display='flex';if(surplusAmt)surplusAmt.textContent=fmtKES(surplus);}
+  else{surplusEl.style.display='none';}
+  if(sr)sr.classList.add('open');
+}
+function closeSplitReceipt(){
+  const sr=document.getElementById('split-receipt');if(sr)sr.classList.remove('open');
+}
+
+// ══════════════════════════════════════════════
+//  DASHBOARD HOME
+// ══════════════════════════════════════════════
+function updateDashboardHome(){
+  // Header chips
+  const iv=document.getElementById('dash-income-val');if(iv)iv.textContent=totalReceived>=1000?'KES '+Math.round(totalReceived/1000)+'K':'KES '+(totalReceived||0).toLocaleString();
+  // Compute total target (just the pct sum for reference; no fixed KES target)
+  const pctUsed=Math.min(totalPct(),100);
+  const tbp=document.getElementById('dash-target-pct');if(tbp){const splitPct=totalReceived>0?Math.min(Math.round((totalReceived-surplusAccumulated)/totalReceived*100),100):0;tbp.textContent=splitPct+'%';}
+  const tbb=document.getElementById('dash-target-bar');if(tbb)tbb.style.width=(totalReceived>0?Math.min(Math.round((totalReceived-surplusAccumulated)/totalReceived*100),100):0)+'%';
+  const sv=document.getElementById('dash-surplus-val');if(sv)sv.textContent=fmtKES(surplusAccumulated);
+  const sb=document.getElementById('dash-surplus-bar');if(sb)sb.style.width=(totalReceived>0?Math.min(Math.round(surplusAccumulated/totalReceived*100),100):0)+'%';
+  // Category cards
+  renderCatCards();
+  // Surplus card
+  const sc=document.getElementById('surplus-card');
+  const sa=document.getElementById('surplus-amount');
+  const sf=document.getElementById('surplus-fill');
+  if(sc)sc.style.display=surplusAccumulated>0?'':'none';
+  if(sa)sa.textContent=fmtKES(surplusAccumulated);
+  if(sf)sf.style.width=totalReceived>0?Math.min(Math.round(surplusAccumulated/totalReceived*100),100)+'%':'0%';
+  // Empty state
+  const es=document.getElementById('home-empty-state');
+  if(es)es.style.display=incomingLog.length===0?'block':'none';
+  // Activity feed
+  renderActivityFeed();
+}
+
+function renderCatCards(){
+  const container=document.getElementById('home-cat-cards');if(!container)return;
+  if(cats.length===0){container.innerHTML='';return;}
+  const catColors=['linear-gradient(90deg,var(--forest),var(--lime))','linear-gradient(90deg,#D97F5A,#EBA486)','linear-gradient(90deg,var(--red),#F87171)','linear-gradient(90deg,#7C3AED,#A855F7)','linear-gradient(90deg,var(--teal),#00C9BD)','linear-gradient(90deg,var(--forest),#2FB08C)'];
+  container.innerHTML=cats.map((c,i)=>{
+    const acc=catAccumulated[i]||0;
+    const hasTarget=c.target&&c.target>0;
+    const progPct=hasTarget
+      ?Math.min(Math.round(acc/c.target*100),100)
+      :(totalReceived>0&&c.pct>0?Math.min(Math.round(acc/(totalReceived*c.pct/100)*100),100):0);
+    const col=catColors[i%catColors.length];
+    const remaining=hasTarget?Math.max(c.target-acc,0):null;
+    const statusColor=hasTarget?(acc>=c.target?'var(--forest)':acc>c.target*0.75?'var(--gold)':'var(--text-3)'):'var(--text-3)';
+    const canPay=acc>0;
+    return `<div class="cat-acc-card">
+      <div class="cac-header">
+        <div class="cac-icon" style="background:${c.bg};">${c.emoji}</div>
+        <div style="flex:1;">
+          <div class="cac-name">${escapeHtml(c.name)}</div>
+          <div class="cac-pct">${c.pct}% of every payment${hasTarget?' · Target: '+fmtKES(c.target):''}</div>
+        </div>
+        <div style="text-align:right;">
+          <div class="cac-amount">${fmtKES(acc)}</div>
+          ${hasTarget?`<div style="font-size:10px;font-weight:700;color:${statusColor};margin-top:2px;">${acc>=c.target?'✓ Target reached':fmtKES(remaining)+' to go'}</div>`:''}
+        </div>
+      </div>
+      <div class="cac-bar"><div class="cac-fill" style="width:${progPct}%;background:${col};"></div></div>
+      <div style="display:flex;justify-content:space-between;margin-top:6px;">
+        <span style="font-size:11px;color:var(--text-3);font-weight:600;">${hasTarget?progPct+'% of target':'Accumulated'}</span>
+        <span style="font-size:11px;font-weight:700;color:var(--forest);">${incomingLog.length} payment${incomingLog.length!==1?'s':''}</span>
+      </div>
+      <div class="cac-footer">
+        <span class="cac-balance-chip">${fmtKES(acc)} available</span>
+        <button class="cac-pay-btn" ${canPay?'':'disabled'} onclick="openPayModal(${i})" title="${canPay?'Pay from this category':'No funds available yet'}">
+          <svg width="13" height="13" fill="none" viewBox="0 0 13 13"><path d="M1 6.5h9M7 3l3 3.5L7 10" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Pay from here
+        </button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderActivityFeed(){
+  const container=document.getElementById('activity-feed');if(!container)return;
+  if(incomingLog.length===0){container.innerHTML='';return;}
+  const label=document.getElementById('activity-label');if(label)label.style.display='block';
+  container.innerHTML=incomingLog.map((entry,ei)=>`
+    <div class="feed-card">
+      <div class="feed-card-header" onclick="toggleFeedEntry(${ei})">
+        <div class="feed-mpesa-icon">📲</div>
+        <div style="flex:1;">
+          <div class="feed-amount">${fmtKES(entry.amount)}</div>
+          <div class="feed-sender">From ${escapeHtml(entry.sender)} · Ref: ${entry.ref}</div>
+        </div>
+        <div style="text-align:right;">
+          <div class="feed-time">${entry.time}</div>
+          <div style="font-size:10px;font-weight:700;color:var(--lime-dark);margin-top:3px;">${entry.splits.length} splits</div>
+        </div>
+        <div class="feed-chevron${entry.expanded?' open':''}" id="chevron-${ei}">
+          <svg width="14" height="14" fill="none" viewBox="0 0 14 14"><path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </div>
+      </div>
+      <div class="feed-splits-body${entry.expanded?' open':''}" id="fsb-${ei}">
+        ${entry.splits.map(sp=>`
+          <div class="feed-split-line">
+            <div class="fsl-icon" style="background:${sp.bg};">${sp.emoji}</div>
+            <div class="fsl-name">${escapeHtml(sp.name)}</div>
+            <div class="fsl-pct">${sp.pct}%</div>
+            <div class="fsl-amt">${fmtKES(sp.amount)}</div>
+          </div>`).join('')}
+        ${entry.surplus>0?`
+          <div class="feed-surplus-line">
+            <span style="font-size:15px;">💰</span>
+            <span style="font-size:12px;font-weight:800;color:var(--forest);flex:1;">Surplus</span>
+            <span style="font-size:13px;font-weight:800;color:var(--forest);">${fmtKES(entry.surplus)}</span>
+          </div>`:''
+        }
+      </div>
+    </div>`).join('');
+}
+
+function toggleFeedEntry(ei){
+  incomingLog[ei].expanded=!incomingLog[ei].expanded;
+  const body=document.getElementById('fsb-'+ei);
+  const chev=document.getElementById('chevron-'+ei);
+  if(body)body.classList.toggle('open',incomingLog[ei].expanded);
+  if(chev)chev.classList.toggle('open',incomingLog[ei].expanded);
+}
+
+// ══════════════════════════════════════════════
+//  HISTORY TAB — Incoming Receipts
+// ══════════════════════════════════════════════
+function renderHistory(filter){
+  const hl=document.getElementById('history-list');if(!hl)return;
+  // Merge incoming + outgoing, sort by id desc
+  const all=[
+    ...incomingLog.map(e=>({...e,_type:'incoming'})),
+    ...outgoingLog.map(e=>({...e,_type:'outgoing'})),
+  ].sort((a,b)=>b.id-a.id);
+  let items=all;
+  if(filter==='receipts')items=all.filter(e=>e._type==='incoming');
+  if(filter==='surplus')items=all.filter(e=>e._type==='incoming'&&e.surplus>0);
+  if(filter==='payments')items=all.filter(e=>e._type==='outgoing');
+  if(items.length===0){
+    hl.innerHTML=`<div class="empty-state">
+      <div class="empty-icon">${filter==='payments'?'💸':filter==='surplus'?'💰':'📲'}</div>
+      <div class="empty-title">${filter==='payments'?'No payments yet':filter==='surplus'?'No surplus yet':'No activity yet'}</div>
+      <div class="empty-sub">${filter==='payments'?'Tap "Pay from here" on any category card to initiate a payment.':filter==='surplus'?'Surplus builds when you receive more than your split total allocates.':'Receive or pay from a category to see activity here.'}</div>
+      ${filter!=='all'?`<button class="empty-action" onclick="filterHistory('all',document.querySelector('.hist-filter'))">View all</button>`:''}
+    </div>`;return;
+  }
+  hl.innerHTML=`<div style="background:var(--white);border-radius:14px;border:1.5px solid var(--border);padding:0 16px;box-shadow:var(--shadow-card);">
+    ${items.map(e=>{
+      if(e._type==='incoming') return `
+        <div class="hist-item">
+          <div class="hist-icon" style="background:linear-gradient(135deg,var(--forest),var(--lime));">📲</div>
+          <div>
+            <div class="hist-name">${fmtKES(e.amount)} received</div>
+            <div class="hist-cat">From ${escapeHtml(e.sender)} · ${e.splits.length} splits${e.surplus>0?' · '+fmtKES(e.surplus)+' surplus':''}</div>
+          </div>
+          <div style="text-align:right;margin-left:auto;">
+            <div style="font-size:14px;font-weight:800;color:var(--forest);">+${fmtKES(e.amount)}</div>
+            <div style="font-size:10px;color:var(--text-3);font-weight:600;">${e.time} · ${e.ref}</div>
+          </div>
+        </div>`;
+      else return `
+        <div class="hist-item${e.status==='pending'?' is-pending':''}"${e.status==='pending'?` onclick="resumePendingPayment(${e.id})"`:''}>
+          <div class="hist-icon" style="background:${e.catBg};">${e.catEmoji}</div>
+          <div>
+            <div class="hist-name">${fmtKES(e.amount)} paid${e.recipientName?' to '+escapeHtml(e.recipientName):''}<span class="outgoing-badge">OUT</span>${e.status==='pending'?'<span class="pending-badge">⏳ PENDING</span>':e.status==='failed'?'<span class="failed-badge">✕ CANCELLED</span>':''}</div>
+            <div class="hist-cat">${escapeHtml(e.catName)} · via ${e.method}${e.memo?' · '+escapeHtml(e.memo):''}${e.confirmCode?' · '+escapeHtml(e.confirmCode):''}</div>
+          </div>
+          <div style="text-align:right;margin-left:auto;">
+            <div style="font-size:14px;font-weight:800;color:${e.status==='failed'?'var(--text-3)':'var(--red)'};">${e.status==='failed'?'—':'-'+fmtKES(e.amount)}</div>
+            <div style="font-size:10px;color:var(--text-3);font-weight:600;">${e.time} · ${e.ref}</div>
+          </div>
+        </div>`;
+    }).join('')}
+  </div>`;
+}
+function filterHistory(f,el){document.querySelectorAll('.hist-filter').forEach(x=>x.classList.remove('active-hf'));if(el)el.classList.add('active-hf');renderHistory(f);}
+
+// ══════════════════════════════════════════════
+//  SCHEDULE
+// ══════════════════════════════════════════════
+let selectedDay=null;
+function renderSchedule(){
+  const today=27;const payDays=new Set(scheduleItems.map(s=>s.day));const days=['Su','Mo','Tu','We','Th','Fr','Sa'];
+  const strip=document.getElementById('cal-strip');
+  if(strip){
+    strip.innerHTML=Array.from({length:31},(_,i)=>{const d=i+1;const dow=days[(new Date(2025,2,d)).getDay()];const isToday=d===today;const hasPay=payDays.has(d);const isSel=selectedDay===d;return`<div class="day-chip${isToday?' today':''}${hasPay&&!isToday?' has-payment':''}${isSel&&!isToday?' selected':''}" onclick="selectDay(${d})"><div class="dw">${dow}</div><div class="dd">${d}</div>${hasPay?`<div class="dpip"></div>`:'<div style="height:9px;"></div>'}</div>`;}).join('');
+    setTimeout(()=>{const chips=strip.querySelectorAll('.day-chip');if(chips[today-1])chips[today-1].scrollIntoView({inline:'center',block:'nearest'});},50);
+  }
+  let items=selectedDay?scheduleItems.filter(s=>s.day===selectedDay):scheduleItems;
+  const upcoming=items.filter(s=>s.status==='upcoming');const paid=items.filter(s=>s.status==='paid');
+  const sl=document.getElementById('schedule-list');if(!sl)return;
+  if(selectedDay&&items.length===0){sl.innerHTML=`<div style="text-align:center;padding:8px 0 6px;display:flex;align-items:center;justify-content:space-between;"><span style="font-size:13px;font-weight:700;color:var(--text);">Mar ${selectedDay}</span><span style="font-size:11px;color:var(--text-3);cursor:pointer;" onclick="selectDay(null)">Clear ×</span></div><div class="empty-state"><div class="empty-icon">📅</div><div class="empty-title">No payments</div><div class="empty-sub">Nothing scheduled for March ${selectedDay}.</div></div>`;return;}
+  sl.innerHTML=`${selectedDay?`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;"><div style="font-size:13px;font-weight:700;color:var(--text);">Mar ${selectedDay}</div><div style="font-size:11px;color:var(--text-3);cursor:pointer;" onclick="selectDay(null)">Clear ×</div></div>`:''}${upcoming.length?`<div class="dash-section-label">Upcoming</div>${upcoming.map(s=>schedItem(s,today)).join('')}`:''}${paid.length?`<div class="dash-section-label" style="margin-top:8px;">Paid</div>${paid.map(s=>schedItem(s,today)).join('')}`:''}`;
+}
+function selectDay(d){selectedDay=(selectedDay===d)?null:d;renderSchedule();}
+function schedItem(s,today){const isPaid=s.status==='paid';const daysLeft=s.day-today;const urgency=daysLeft>=0&&daysLeft<=3&&!isPaid;const badgeBg=isPaid?'var(--forest-light)':urgency?'var(--red-light)':'var(--gold-light)';const badgeColor=isPaid?'var(--forest)':urgency?'var(--red)':'var(--gold)';const badgeText=isPaid?'✓ Paid':daysLeft===0?'Due today':daysLeft>0?`In ${daysLeft} days`:'Overdue';return`<div class="sched-item${isPaid?' paid':''}"><div class="sched-item-row"><div class="sched-icon" style="background:${s.bg};">${s.emoji}</div><div style="flex:1;"><div class="sched-name">${s.name}</div><div class="sched-meta">${s.recurring} · Mar ${s.day}</div><span class="sched-badge" style="background:${badgeBg};color:${badgeColor};">${badgeText}</span></div><div style="text-align:right;"><div class="sched-amount">KES ${s.amount.toLocaleString()}</div>${!isPaid?`<div style="font-size:10px;color:var(--text-3);font-weight:600;margin-top:4px;">Auto-pay</div>`:'<div style="font-size:10px;color:var(--forest);font-weight:700;margin-top:4px;">Done</div>'}</div></div></div>`;}
+
+// ══════════════════════════════════════════════
+//  REWARDS
+// ══════════════════════════════════════════════
+function renderRewards(){
+  const rl=document.getElementById('rewards-list');const al=document.getElementById('achievements-list');
+  if(rl)rl.innerHTML=rewardsData.map(r=>`<div class="reward-card" onclick="${r.unlocked?`redeemReward('${r.name}',${r.pts})`:`lockedReward(${r.pts})`}"><div class="reward-logo" style="background:${r.bg};">${r.logo}</div><div style="flex:1;"><div class="reward-name">${r.name}</div><div class="reward-desc">${r.desc}</div></div><div class="reward-pts${r.unlocked?'':' locked'}">${r.unlocked?`Redeem · ${r.pts}pts`:`🔒 ${r.pts}pts`}</div></div>`).join('');
+  if(al)al.innerHTML=`<div style="background:var(--white);border-radius:14px;border:1.5px solid var(--border);padding:0 16px;box-shadow:var(--shadow-card);">${achievementsData.map(a=>`<div class="achieve-item"><div class="achieve-icon" style="opacity:${a.done?1:0.35};">${a.icon}</div><div><div class="achieve-name" style="color:${a.done?'var(--text)':'var(--text-3)'};">${a.name}</div><div class="achieve-sub">${a.sub}</div></div><div class="achieve-pts" style="color:${a.done?'var(--lime-dark)':'var(--text-3)'};">${a.pts}</div></div>`).join('')}</div>`;
+}
+function redeemReward(name,pts){showToast(`🎉 Redeeming ${name} — ${pts}pts used! Check SMS for voucher.`,'success','toast-host',4000);}
+function lockedReward(pts){showToast(`Need ${pts-1240} more points to unlock this reward`,'info','toast-host',3000);}
+
+// ══════════════════════════════════════════════
+//  PROFILE
+// ══════════════════════════════════════════════
+function renderProfile(){
+  const pm=document.getElementById('profile-menu');const nt=document.getElementById('notif-toggles');
+  if(pm)pm.innerHTML=profileMenu.map(m=>`<div class="pmenu-item" onclick="showToast('Opening ${m.label}…','info','toast-host',1800)"><div class="pmenu-icon" style="background:${m.bg};">${m.icon}</div><div class="pmenu-label">${m.label}</div><div class="pmenu-val">${m.val}</div><svg width="16" height="16" fill="none" viewBox="0 0 16 16"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div>`).join('');
+  if(nt)nt.innerHTML=notifData.map((n,i)=>`<div class="notif-row"><div><div class="notif-label">${n.label}</div><div class="notif-sub">${n.sub}</div></div><div class="toggle${n.on?'':' off'}" id="tog-${i}" onclick="toggleNotif(${i})"></div></div>`).join('');
+}
+function toggleNotif(i){notifData[i].on=!notifData[i].on;const el=document.getElementById('tog-'+i);if(el)el.classList.toggle('off',!notifData[i].on);showToast(notifData[i].on?'Turned on ✓':'Turned off','info','toast-host',1800);}
+
+let darkMode=false;
+function toggleDarkMode(){
+  darkMode=!darkMode;
+  document.querySelector('.phone').classList.toggle('dark',darkMode);
+  const tog=document.getElementById('dark-toggle');if(tog)tog.classList.toggle('off',!darkMode);
+  const icon=document.getElementById('dark-mode-icon');if(icon)icon.textContent=darkMode?'🌙':'☀️';
+  showToast(darkMode?'Dark mode on 🌙':'Dark mode off ☀️','info','toast-host',1800);
+}
+
+function openSignOutConfirm(){
+  const m=document.getElementById('signout-modal');if(m)m.classList.add('open');
+}
+function closeSignOutConfirm(e){
+  if(!e||e.target===document.getElementById('signout-modal'))document.getElementById('signout-modal').classList.remove('open');
+}
+function confirmSignOut(){
+  document.getElementById('signout-modal').classList.remove('open');
+  activeTab='home';
+  go('s-login');
+  showToast('You\'ve been signed out','info','s-login-toast',3000);
+}
+
+// ══════════════════════════════════════════════
+//  OUTGOING PAYMENTS
+// ══════════════════════════════════════════════
+let outgoingLog=[];
+let activeCatIndex=null;
+let selectedPayMethod={key:'mpesa',icon:'📱',name:'M-Pesa',type:'Safaricom'};
+let redirectTimer=null;
+let confirmStepTimer=null;
+let pendingPayment=null; // the in-flight entry object awaiting user confirmation
+
+const payMethodAppNames={mpesa:'M-Pesa',equity:'Equity EazzyPay',kcb:'KCB App',coop:'MCo-opCash'};
+const payMethodColors={mpesa:'#00A651',equity:'#E50000',kcb:'#00529B',coop:'#006B3C'};
+const payMethodLinks={
+  mpesa:(amt,recipient)=>`tel:*150*00*1*${recipient.replace(/\D/g,'')}*${Math.round(amt)}%23`,
+  equity:()=>`eazzypay://pay`,
+  kcb:()=>`kcbapp://pay`,
+  coop:()=>`mco-opcash://pay`,
+};
+
+function openPayModal(catIdx){
+  const cat=cats[catIdx];const avail=catAccumulated[catIdx]||0;
+  if(avail<=0){showToast('No funds in this category yet','warning','toast-host',2500);return;}
+  activeCatIndex=catIdx;
+  document.getElementById('pm-eyebrow').textContent='Pay from '+escapeHtml(cat.name);
+  document.getElementById('pm-cat-icon').textContent=cat.emoji;
+  document.getElementById('pm-cat-icon').style.background=cat.bg;
+  document.getElementById('pm-cat-name').textContent=cat.name;
+  document.getElementById('pm-cat-bal').textContent=fmtKES(avail);
+  document.getElementById('pm-amount').value='';
+  document.getElementById('pm-recipient').value='';
+  document.getElementById('pm-recipient-name').value='';
+  document.getElementById('pm-memo').value='';
+  document.getElementById('pm-balance-hint').textContent='Max: '+fmtKES(avail);
+  document.getElementById('pm-balance-hint').className='pay-balance-hint';
+  document.getElementById('pm-amt-wrap').classList.remove('error-glow');
+  document.getElementById('pm-error-msg').style.display='none';
+  clearPayFieldError('pm-recipient');
+  // Smart quick amounts
+  const qs=[500,1000,2500,5000].filter(q=>q<avail);
+  qs.push(avail);
+  const uniq=[...new Set(qs)].slice(-5);
+  document.getElementById('pm-quick-row').innerHTML=uniq.map(q=>`<div class="pay-quick-chip" onclick="setPayQuick(${q})">${fmtKES(q)}</div>`).join('');
+  // Reset method
+  const firstCard=document.querySelector('#pm-method-grid .pay-method-card');
+  if(firstCard)selectPayMethod(firstCard,'mpesa','📱','M-Pesa','Safaricom');
+  document.getElementById('pay-modal').classList.add('open');
+  setTimeout(()=>document.getElementById('pm-amount').focus({preventScroll:true}),350);
+}
+
+function closePayModal(e){
+  if(!e||e.target===document.getElementById('pay-modal'))
+    document.getElementById('pay-modal').classList.remove('open');
+}
+
+function setPayQuick(amt){
+  document.getElementById('pm-amount').value=amt;onPayAmountInput();
+  document.getElementById('pm-amount').focus({preventScroll:true});
+}
+
+function selectPayMethod(el,key,icon,name,type){
+  document.querySelectorAll('.pay-method-card').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedPayMethod={key,icon,name,type};
+  const lbl=document.getElementById('pm-confirm-label');if(lbl)lbl.textContent='Pay via '+name;
+  const rl=document.getElementById('pm-recipient-label');
+  if(rl)rl.textContent=key==='mpesa'?'Phone number / Till / Paybill':name+' account number';
+}
+
+function onPayAmountInput(){
+  const avail=catAccumulated[activeCatIndex]||0;
+  const val=parseFloat(document.getElementById('pm-amount').value)||0;
+  const hint=document.getElementById('pm-balance-hint');
+  const wrap=document.getElementById('pm-amt-wrap');
+  wrap.classList.remove('error-glow');
+  if(val<=0){hint.textContent='Max: '+fmtKES(avail);hint.className='pay-balance-hint';}
+  else if(val>avail){hint.textContent='Exceeds balance by '+fmtKES(val-avail);hint.className='pay-balance-hint danger';}
+  else if(val>avail*0.9){hint.textContent=Math.round(val/avail*100)+'% of your '+cats[activeCatIndex].name+' balance';hint.className='pay-balance-hint warn';}
+  else{hint.textContent=fmtKES(avail-val)+' will remain';hint.className='pay-balance-hint';}
+  document.getElementById('pm-error-msg').style.display='none';
+}
+
+function validatePayAmount(){
+  const avail=catAccumulated[activeCatIndex]||0;
+  const val=parseFloat(document.getElementById('pm-amount').value)||0;
+  const wrap=document.getElementById('pm-amt-wrap');
+  if(!val||val<=0||val>avail){wrap.classList.add('error-glow');return false;}
+  wrap.classList.remove('error-glow');return true;
+}
+
+function validatePayRecipient(){
+  const val=document.getElementById('pm-recipient').value.trim();
+  const inp=document.getElementById('pm-recipient');const err=document.getElementById('pm-recipient-err');
+  if(!val){inp.classList.add('error');err.style.display='block';return false;}
+  inp.classList.remove('error');err.style.display='none';return true;
+}
+
+function clearPayFieldError(id){
+  const inp=document.getElementById(id);const err=document.getElementById(id+'-err');
+  if(inp)inp.classList.remove('error');if(err)err.style.display='none';
+}
+
+function confirmPayment(){
+  const amtOk=validatePayAmount();const recOk=validatePayRecipient();
+  if(!amtOk||!recOk){
+    const em=document.getElementById('pm-error-msg');
+    em.textContent=!amtOk?'Enter an amount within your available balance':'Please enter a recipient';
+    em.style.display='block';return;
+  }
+  const amt=parseFloat(document.getElementById('pm-amount').value);
+  const recipient=document.getElementById('pm-recipient').value.trim();
+  const recipientName=document.getElementById('pm-recipient-name').value.trim();
+  const memo=document.getElementById('pm-memo').value.trim();
+  const cat=cats[activeCatIndex];
+  document.getElementById('pay-modal').classList.remove('open');
+  showRedirectOverlay(amt,recipient,recipientName,memo,cat,activeCatIndex);
+}
+
+function showRedirectOverlay(amt,recipient,recipientName,memo,cat,catIdx){
+  const m=selectedPayMethod;
+  const overlay=document.getElementById('redirect-overlay');
+  document.getElementById('ro-icon').textContent=m.icon;
+  document.getElementById('ro-icon').style.background=(payMethodColors[m.key]||'#146881')+'22';
+  document.getElementById('ro-title').textContent='Opening '+payMethodAppNames[m.key]+'…';
+  document.getElementById('ro-sub').textContent=`Paying ${fmtKES(amt)}${recipientName?' to '+recipientName:' to '+recipient} from your ${cat.name} wallet. We can't detect the result automatically — we'll ask you to confirm when you're back.`;
+  document.getElementById('ro-opening-state').style.display='';
+  document.getElementById('ro-confirm-state').style.display='none';
+  document.getElementById('ro-confirm-code').value='';
+  overlay.classList.add('show');
+  // Attempt deep link out to the payment app. Real payment apps don't hand control
+  // (or a result) back to us, so once we leave, we can only reserve the funds and
+  // ask the user to confirm what happened when they return.
+  redirectTimer=setTimeout(()=>{
+    try{window.location.href=payMethodLinks[m.key](amt,recipient);}catch(e){}
+    createPendingPayment(amt,recipient,recipientName,memo,cat,catIdx,m);
+    // Simulate the brief moment the user is away in the payment app, then
+    // surface the confirm step the instant they're back in Wallex.
+    confirmStepTimer=setTimeout(()=>showConfirmStep(),2000);
+  },1200);
+}
+
+function cancelRedirect(){
+  // Only reachable before we've left the app / reserved anything — a full, no-trace cancel.
+  clearTimeout(redirectTimer);
+  document.getElementById('redirect-overlay').classList.remove('show');
+}
+
+function createPendingPayment(amt,recipient,recipientName,memo,cat,catIdx,method){
+  // Reserve the funds immediately so the same balance can't be spent twice
+  // while we wait for the user to tell us what happened.
+  if(catAccumulated[catIdx]!==undefined)catAccumulated[catIdx]=Math.max(0,catAccumulated[catIdx]-amt);
+  const ref='OUT'+Math.random().toString(36).substr(2,6).toUpperCase();
+  const entry={id:Date.now(),amount:amt,recipient,recipientName,memo,catName:cat.name,catEmoji:cat.emoji,catBg:cat.bg,catIdx,method:method.name,methodIcon:method.icon,time:now(),ref,status:'pending'};
+  outgoingLog.unshift(entry);
+  pendingPayment=entry;
+  updateDashboardHome();
+  if(document.getElementById('tab-history').classList.contains('tab-active'))renderHistory('all');
+}
+
+function showConfirmStep(){
+  if(!pendingPayment)return;
+  const p=pendingPayment;
+  document.getElementById('ro-opening-state').style.display='none';
+  document.getElementById('ro-confirm-state').style.display='';
+  document.getElementById('ro-confirm-amt').innerHTML=`Paying <b>${fmtKES(p.amount)}</b> to ${escapeHtml(p.recipientName||p.recipient)}`;
+}
+
+function finalizePendingPayment(success){
+  if(!pendingPayment)return;
+  const p=pendingPayment;
+  const code=document.getElementById('ro-confirm-code').value.trim();
+  if(success){
+    p.status='confirmed';
+    if(code)p.confirmCode=code;
+    showToast(`✅ ${fmtKES(p.amount)} confirmed paid to ${p.recipientName||p.recipient}`,'success','toast-host',3500);
+  }else{
+    p.status='failed';
+    // Return the reserved funds to the category since the payment didn't happen.
+    if(catAccumulated[p.catIdx]!==undefined)catAccumulated[p.catIdx]+=p.amount;
+    showToast(`↩️ Payment cancelled — ${fmtKES(p.amount)} returned to ${p.catName}`,'info','toast-host',3500);
+  }
+  pendingPayment=null;
+  clearTimeout(confirmStepTimer);
+  document.getElementById('redirect-overlay').classList.remove('show');
+  updateDashboardHome();
+  if(document.getElementById('tab-history').classList.contains('tab-active'))renderHistory('all');
+}
+
+function resumePendingPayment(id){
+  const entry=outgoingLog.find(e=>e.id===id&&e.status==='pending');
+  if(!entry)return;
+  pendingPayment=entry;
+  const m={key:'mpesa',name:entry.method,icon:entry.methodIcon};
+  // Match icon/branding to whichever method this payment actually used
+  for(const k in payMethodAppNames){if(payMethodAppNames[k]===entry.method){m.key=k;break;}}
+  document.getElementById('ro-icon').textContent=entry.methodIcon;
+  document.getElementById('ro-icon').style.background=(payMethodColors[m.key]||'#146881')+'22';
+  document.getElementById('redirect-overlay').classList.add('show');
+  document.getElementById('ro-confirm-code').value=entry.confirmCode||'';
+  showConfirmStep();
+}
+
+// ══════════════════════════════════════════════
+//  DOTS
+// ══════════════════════════════════════════════
+function renderDots(){
+  const idx=SCREENS.indexOf(current);
+  document.getElementById('dots').innerHTML=SCREENS.map((_,i)=>`<div class="dot${i===idx?' active':''}"></div>`).join('');
+}
+
+// ── INIT ──
+initAccumulators();
+renderAlloc();
+renderDots();
+document.getElementById('tab-home').classList.add('tab-active');
+</script>
+</body>
+</html>
